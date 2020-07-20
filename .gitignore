@@ -6,9 +6,12 @@ data/
 results/
 plots/
 maps/
+eqns/
+siting_model/
 .ipynb_checkpoints/
 scripts/.DS_Store
-scripts/old/compostsites.R
+scripts/old/
+scripts/notebooks
 .DS_Store
 NOTES
 app.py
