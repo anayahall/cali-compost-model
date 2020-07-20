@@ -9,3 +9,8 @@ maps/
 .ipynb_checkpoints/
 scripts/.DS_Store
 scripts/old/compostsites.R
+.DS_Store
+NOTES
+app.py
+requirements-old.txt
+grapevie.Rproj
