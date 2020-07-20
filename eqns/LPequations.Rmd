@@ -1,0 +1,77 @@
+---
+title: "compost distribution"
+author: "Anaya Hall"
+# date: "4/1/2019"
+# output: word_document
+output: pdf_document
+fontsize: 12 pt
+geometry: margin=.75in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\newcommand{\sR}[1]{\in\mathbb{R}^{#1}}
+
+$i$ : Index of county ($1,...,n$)  
+$j$ : Index of facilities ($1,...,m$)  
+$k$ : Index on rangelands ($1,...,p$)
+
+$$GWP = 
+\underbrace{\sum_{i=1}^{n} \sum_{j=1}^{m} h \cdot s_{ij} \cdot D_{ij} }_{\text{transport from county to facility}} + 
+\underbrace{\sum_{i=1}^{n} f \cdot (1-\sum_{j=1}^{m}s_{ij}) }_{\text{waste that remains in county}} +  
+\underbrace{\sum_{i=1}^{n} \sum_{j=1}^{m} t \cdot s_{ij}}_{\text{processing emissions}} + 
+\underbrace{\sum_{k=1}^{p} \sum_{j=1}^{m} h \cdot L_{jk}d_{jk} }_{\text{transport from facility to land}} +  
+\underbrace{\sum_{k=1}^p p \cdot d_{jk}}_{\text{spreading compost}} $$
+
+$$ Cost = 
+\underbrace{\sum_{i=1}^{n} \sum_{j=1}^{m} d \cdot D_{ij} s_{ij} }_{\text{transport from county to facility}} +  
+\underbrace{\sum_{i=1}^{n} \sum_{j=1}^{m} e \cdot L_{jk}d_{jk} }_{\text{transport from facility to land}} +  
+\underbrace{\sum_{i=1}^n k \cdot A_k}_{\text{cost to spread compost}} $$
+
+Intake for each facility is sum of the proportion taken in from $c_i$ for $i = 1,...,n$  
+$$I_j = \sum_{i=1}^{n} s_{ij}$$  
+
+Output of each facility is equal to intake converted into compost  
+$$O_j = c \cdot I_j$$  
+
+Total compost applied in each county is the sum of the proporion of output from $f_j$ for $j = 1,...,m$  
+$$A_k = \sum_{j=1}^{m} d_{jk}$$  
+
+
+$$D\sR{n\times m}$$ cheese
+
+subject to: 
+
+$I_j \leq F_j$  
+$A_i \leq C_i$  
+$\sum_{j=1}^{m} s_{ij} \leq W_i$  
+$\sum_{i=1}^{n} d_{jk} \leq F_j$  
+
+$0 \leq s_{ij} $  
+$0 \leq d_{jk} $  
+
+where  
+
+$s_{ij}$ = Quantity of $W_i$ to send to $f_j$  
+$$s\sR{n\times m}$$
+$d_{jk}$ = Quantity of facility $f_j$ output to send to $c_i$ working land  
+$$d\sR{n\times m}$$
+$D_{ij}$ = Distance to haul to facility from county centroid  
+$L_{jk}$ = Distance from facility to working land  
+$W_i$ = Waste available in county $i$  
+$F_j$ = Intake capacity of facility $j$  
+$C_i$ = Amount of output county $i$ can take in (based on amount of land)  
+
+and 
+
+$S$ = Sequestration rate  
+$c$ = Conversion factor of waste into compost  (%)  
+$f$ = Emission factor for waste left in county ($\frac {CO2_{e}}{ton}$)    
+$g$ = Emission factor for compost stranded at facility  ($\frac {CO2_{e}}{ton}$)   
+$h$ = Transportation emission factor ($\frac {CO2_{e}}{ton \cdot km}$) (separate??)     
+$p$ = Emission factor for compost production ($\frac {CO2_{e}}{ton}$)  
+$e$ = Cost to haul away from facility to land  ($\frac {\$}{ton \cdot km}$)     
+$d$ = Cost to haul to facility from county ($\frac {\$}{ton \cdot km}$)    
+$k$ = Cost to apply compost to fields ($\frac {\$}{ton}$)  
