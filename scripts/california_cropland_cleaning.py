@@ -11,7 +11,7 @@ import geopandas as gpd
 import scipy as sp
 
 # Set data directory -- CHANGE THIS FOR YOUR LOCAL DEVICE
-DATA_DIR = "/Users/anayahall/projects/compopt/data" 
+DATA_DIR = "/Users/anayahall/projects/cali-compost-model/data" 
 
 ############################################################
 # CROPLANDS
@@ -19,7 +19,7 @@ DATA_DIR = "/Users/anayahall/projects/compopt/data"
  
 # Read in cropland data
 cropmap = gpd.read_file(opj(DATA_DIR, 
-  "raw/Crop__Mapping_2014/Crop__Mapping_2014.shp")) 
+  "raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp")) 
 
 # Exclude non-crop uses
 # non_crops = ["Managed Wetland", "Urban", "Idle", "Mixed Pasture"]	#Anaya's original categories to exclude
@@ -29,8 +29,9 @@ crops = cropmap[cropmap['DWR_Standa'].isin(non_crops)== False] # Caitlin's field
 
 
 ## Save as shapefile
-out = r"clean/CropMap2014_clean.shp"
-crops.to_file(driver='ESRI Shapefile', filename=opj(DATA_DIR, out))
+# out = r"clean/CropMap2014_clean.shp"
+# crops.to_file(driver='ESRI Shapefile', filename=opj(DATA_DIR, out))
 
 
 # done! 
+

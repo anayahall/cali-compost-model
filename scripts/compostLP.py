@@ -19,13 +19,16 @@ import scipy as sp
 
 ############################################################
 # Change this to subset the data easily for running locally
-SUBSET = False
+SUBSET = True
 
 # Change this to activate/decativate print statements throughout
 DEBUG = True
 
 # Change this for counties vs census tracts (true is muni, false is counties)
 CENSUSTRACT = False
+
+# include crops?
+CROPLAND = True
 ############################################################
 
 # set data directories (relative)
@@ -227,16 +230,16 @@ if SUBSET == True:
 # CROPLANDS
 #############################################################
  
-# # Import croplands
-# cropmap = gpd.read_file(opj(DATA_DIR, 
-#   "raw/Crop__Mapping_2014/Crop__Mapping_2014.shp"))
+# Import croplands
+cropmap = gpd.read_file(opj(DATA_DIR, 
+  "raw/Crop__Mapping_2014/Crop__Mapping_2014.shp"))
 
-# # exclude non-crop uses
-# not_crops = ["Managed Wetland", "Urban", "Idle", "Mixed Pasture"]
-# crops = cropmap[cropmap['Crop2014'].isin(not_crops)== False]
+# exclude non-crop uses
+not_crops = ["Managed Wetland", "Urban", "Idle", "Mixed Pasture"]
+crops = cropmap[cropmap['Crop2014'].isin(not_crops)== False]
 
-# leave IDLE , delete managed wetland, urban, and riparian
-## SAVE AS SHAPE!
+leave IDLE , delete managed wetland, urban, and riparian
+# SAVE AS SHAPE!
 
 ############################################################
 # OPTIMIZATION MODEL       #################################
