@@ -14,6 +14,7 @@ import shapely as shp
 import geopandas as gpd
 import scipy as sp
 
+from california_cropland_cleaning import cleancropdata
 # from biomass_preprocessing import MergeInventoryAndCounty
 #from swis_preprocessing import LoadAndCleanSWIS #TODO
 
@@ -230,16 +231,10 @@ if SUBSET == True:
 # CROPLANDS
 #############################################################
  
-# Import croplands
-cropmap = gpd.read_file(opj(DATA_DIR, 
-  "raw/Crop__Mapping_2014/Crop__Mapping_2014.shp"))
+# # Import croplands
+croplands = cleancropdata(opj(DATA_DIR, 
+	  "raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
 
-# exclude non-crop uses
-not_crops = ["Managed Wetland", "Urban", "Idle", "Mixed Pasture"]
-crops = cropmap[cropmap['Crop2014'].isin(not_crops)== False]
-
-leave IDLE , delete managed wetland, urban, and riparian
-# SAVE AS SHAPE!
 
 ############################################################
 # OPTIMIZATION MODEL       #################################
