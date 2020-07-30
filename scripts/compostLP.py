@@ -14,7 +14,7 @@ import shapely as shp
 import geopandas as gpd
 import scipy as sp
 
-# from california_cropland_cleaning import cleancropdata
+from california_cropland_cleaning import cleancropdata
 # from biomass_preprocessing import MergeInventoryAndCounty
 #from swis_preprocessing import LoadAndCleanSWIS #TODO
 
@@ -232,9 +232,9 @@ if SUBSET == True:
 #############################################################
  
 # # # Import croplands
-# if CROPLAND == True:
-# 	croplands = cleancropdata(opj(DATA_DIR, 
-# 		  "raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
+if CROPLAND == True:
+	croplands = cleancropdata(opj(DATA_DIR, 
+		"raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
 
 
 ############################################################
