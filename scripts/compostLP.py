@@ -14,6 +14,7 @@ import shapely as shp
 import geopandas as gpd
 import scipy as sp
 
+from california_cropland_cleaning import cleancropdata
 # from biomass_preprocessing import MergeInventoryAndCounty
 #from swis_preprocessing import LoadAndCleanSWIS #TODO
 
@@ -26,6 +27,9 @@ DEBUG = True
 
 # Change this for counties vs census tracts (true is muni, false is counties)
 CENSUSTRACT = False
+
+# include crops?
+CROPLAND = False
 ############################################################
 
 # set data directories (relative)
@@ -165,9 +169,9 @@ print("MSW loaded - now adjust to get wt") if (DEBUG == True) else ()
 # before being composted)
 # equivlant to 0.609375
 # create new array of values
-new_wt_values = msw[msw['subtype'] == 'MSW_food']['wt']*0.609375
-# replace these in place!
-msw.loc[msw['subtype'] == 'MSW_food', 'wt'] = new_wt_values
+# new_wt_values = msw[msw['subtype'] == 'MSW_food']['wt']*0.609375
+# # replace these in place!
+# msw.loc[msw['subtype'] == 'MSW_food', 'wt'] = new_wt_values
 ###################################
 ############################################################
 
@@ -227,16 +231,11 @@ if SUBSET == True:
 # CROPLANDS
 #############################################################
  
-# # Import croplands
-# cropmap = gpd.read_file(opj(DATA_DIR, 
-#   "raw/Crop__Mapping_2014/Crop__Mapping_2014.shp"))
+# # # Import croplands
+if CROPLAND == True:
+	croplands = cleancropdata(opj(DATA_DIR, 
+		"raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
 
-# # exclude non-crop uses
-# not_crops = ["Managed Wetland", "Urban", "Idle", "Mixed Pasture"]
-# crops = cropmap[cropmap['Crop2014'].isin(not_crops)== False]
-
-# leave IDLE , delete managed wetland, urban, and riparian
-## SAVE AS SHAPE!
 
 ############################################################
 # OPTIMIZATION MODEL       #################################
@@ -316,7 +315,7 @@ def SolveModel(scenario_name = None,
 		# first, adjust food waste tonnage by fw reduction factor
 		msw.loc[(msw['subtype']=='MSW_food'),'wt'] = msw[msw['subtype'] == 'MSW_food']['wt']*(1-fw_reduction)
 		# then combine (sum) and convert to cubic meters	   
-		msw['disposal'] = msw.groupby(['muni_ID'])['wt'].transform('sum') * (1.30795*(1/2.24))
+		msw['disposal'] = msw.groupby(['muni_ID'])['wt'].transform('sum') / (1.30795*(1/2.24))
 		msw = msw.drop_duplicates(subset = 'muni_ID')
 		msw['subtype'].replace({'MSW_green':'food_and_green'}, inplace = True)
 
@@ -324,12 +323,12 @@ def SolveModel(scenario_name = None,
 		# subset just food waste and convert wet tons to cubic meters
 		msw = msw[(msw['subtype'] == "MSW_food")]
 		# msw['disposal'] = (1-fw_reduction)* counties['disposal_wm3']
-		msw['disposal'] = (1-fw_reduction)* msw['wt'] * (1.30795*(1/2.24))
+		msw['disposal'] = (1-fw_reduction)* msw['wt'] / (1.30795*(1/2.24))
 
 	elif feedstock == 'green':
 		# make green!!
 		msw = msw[(msw['subtype'] == "MSW_green")]
-		msw['disposal'] = msw['wt'] * (1.30795*(1/2.24))
+		msw['disposal'] = msw['wt'] / (1.30795*(1/2.24))
 
 ############################################################
 
@@ -695,6 +694,7 @@ def SolveModel(scenario_name = None,
 
 	cost_millions = (project_cost/(10**6))    
 	print("TOTAL COST (Millions $) : ", cost_millions)
+	# val is in terms of kg CO2e 
 	result = project_cost/val
 	abatement_cost = (-result*1000)
 	print("*********************************************")
@@ -705,7 +705,7 @@ def SolveModel(scenario_name = None,
 	c2f_values, f2r_values = SaveModelVars(c2f, f2r)
 
 
-	return c2f_values, f2r_values, land_app, cost_millions, val, abatement_cost
+	return c2f_values, f2r_values, land_app, cost_millions, CO2mit, abatement_cost
 
 # r = pd.merge(rangelands, rdf, on = "COUNTY")
 # fac_df = pd.merge(facilities, fac_df, on = "SwisNo")
