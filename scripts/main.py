@@ -55,7 +55,8 @@ def PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
             "**********************************************",        
             "Project Cost (Millions $): ", str(cost_millions),
             "**********************************************",
-            "Optimal Object Value (Mt CO2eq):" , str(val),
+            "Optimal Object Value (MMT CO2eq):" , str(val),
+            # "Optimal Object Value (MMT CO2eq)" , str(val*10**(-9))
             "**********************************************",
             "$/tCO2e MITIGATED: ", str(abatement_cost),
             "**********************************************",

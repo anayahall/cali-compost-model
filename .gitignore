@@ -12,6 +12,7 @@ siting_model/
 scripts/.DS_Store
 scripts/old/
 scripts/notebooks
+scripts/dockerlogin
 .DS_Store
 NOTES
 app.py
