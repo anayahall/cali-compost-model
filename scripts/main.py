@@ -17,7 +17,7 @@ import yagmail
 # Change this to activate/decativate print statements throughout
 DEBUG = True
 # Send email results! 
-SEND_EMAIL = True
+SEND_EMAIL = False
 #single run?
 TEST_RUN = True
 ############################################################

@@ -29,7 +29,7 @@ DEBUG = True
 CENSUSTRACT = False
 
 # include crops?
-CROPLAND = False
+CROPLAND = True
 ############################################################
 
 # set data directories (relative)
@@ -221,6 +221,12 @@ rangelands = rangelands.to_crs(epsg=4326)
 rangelands['OBJECTID'] = rangelands.index
 
 
+# Each planning unit falls into one of 3 groups.
+# 0. Not included in priority areas.
+# 1. Important for rangeland goals - selected 3-7 times of 10.
+# 2. Critical for rangeland goals- selected 8-10 times
+
+
 # convert area capacity into volume capacity
 rangelands['area_ha'] = rangelands['Shape_area']/10000 # convert area in m2 to hectares
 rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
@@ -274,7 +280,8 @@ def SolveModel(scenario_name = None,
 
 	# data sources
 	msw = msw, 
-	landuse = rangelands, 
+	landuse = rangelands,
+	priority = 1,  
 	facilities = facilities,
 	
 	# Scenario settings
@@ -332,6 +339,7 @@ def SolveModel(scenario_name = None,
 	# #Variables
 	print("--setting constant parameters") if (DEBUG == True) else ()
 
+
 	print("-- setting feedstock and disposal") if (DEBUG == True) else ()
 	# change supply constraint by feedstock selected
 	if feedstock == 'food_and_green':
@@ -353,6 +361,17 @@ def SolveModel(scenario_name = None,
 		# make green!!
 		msw = msw[(msw['subtype'] == "MSW_green")]
 		msw['disposal'] = msw['wt'] / (1.30795*(1/2.24))
+
+	# # # Priority settng for rangelands 
+	# # critical only
+	# if priority == 2:
+	# 	rangelands = rangelands[rangelands['Priority'] == 2]
+	# # critical and semi critical
+	# elif priority == 1: 
+	# 	rangelands = rangelands[(rangelands['Priority'] == 1) | (rangelands['Priority'] == 2)]
+	# # not included in planning goals
+	# elif priority == 0: 
+	# 	rangelands = rangelands[{(rangelands['Priority'] == 0)}]
 
 ############################################################
 
