@@ -20,7 +20,7 @@ from california_cropland_cleaning import cleancropdata
 
 ############################################################
 # Change this to subset the data easily for running locally
-SUBSET = False
+SUBSET = True
 
 # Change this to activate/decativate print statements throughout
 DEBUG = True
@@ -193,24 +193,48 @@ print("facility data loaded") if (DEBUG == True) else ()
 # RANGELANDS 
 ############################################################
 # Import rangelands
-print("about to import rangelands") if (DEBUG == True) else ()
-rangelands = gpd.read_file(opj(DATA_DIR, "raw/CA_FMMP_G/gl_bycounty/grazingland_county.shp"))
-rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
+# print("about to import rangelands") if (DEBUG == True) else ()
+# rangelands = gpd.read_file(opj(DATA_DIR, "raw/CA_FMMP_G/gl_bycounty/grazingland_county.shp"))
+# rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
 
-# Fix county names in RANGELANDS! 
-countyIDs = pd.read_csv(opj(DATA_DIR, "interim/CA_FIPS_wcode.csv"), 
-	names = ['FIPS', 'COUNTY', 'State', 'county_nam'])
-countyIDs = countyIDs[['COUNTY', 'county_nam']]
-rangelands = pd.merge(rangelands, countyIDs, on = 'county_nam')
+# # Fix county names in RANGELANDS! 
+# countyIDs = pd.read_csv(opj(DATA_DIR, "interim/CA_FIPS_wcode.csv"), 
+# 	names = ['FIPS', 'COUNTY', 'State', 'county_nam'])
+# countyIDs = countyIDs[['COUNTY', 'county_nam']]
+# rangelands = pd.merge(rangelands, countyIDs, on = 'county_nam')
+
+# # convert area capacity into volume capacity
+# rangelands['area_ha'] = rangelands['Shape_Area']/10000 # convert area in m2 to hectares
+# rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
+# # rangelands['capacity_ton'] = rangelands['area_ha'] * 37.1 # also calculated for tons unit framework
+
+# # estimate centroid
+# rangelands['centroid'] = rangelands['geometry'].centroid 
+# print("rangelands loaded") if (DEBUG == True) else ()
+
+
+# UPDATE 08032020 -- bring in new rangelands (and keep naming convention)
+print("bringing in second rangeland data file") if (DEBUG == True) else ()
+rangelands = gpd.read_file(opj(DATA_DIR, "rangelandareas/ds553.shp"))
+rangelands = rangelands.to_crs(epsg=4326)
+
+rangelands['OBJECTID'] = rangelands.index
+
 
 # convert area capacity into volume capacity
-rangelands['area_ha'] = rangelands['Shape_Area']/10000 # convert area in m2 to hectares
+rangelands['area_ha'] = rangelands['Shape_area']/10000 # convert area in m2 to hectares
 rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
-# rangelands['capacity_ton'] = rangelands['area_ha'] * 37.1 # also calculated for tons unit framework
-
-# estimate centroid
+# # estimate centroid
 rangelands['centroid'] = rangelands['geometry'].centroid 
-print("rangelands loaded") if (DEBUG == True) else ()
+
+
+# run full model below and see if it changes numbers dramatically, 
+# then think through how to rename these such that it fits with croplands too. 
+# idea: rangelands have priority values, maybe crops could be assigned these?
+
+
+
+
 
 ############################################################
 # SUBSET!! for testing functions
@@ -513,7 +537,8 @@ def SolveModel(scenario_name = None,
 		temp_transport_cost = 0
 		land_app[r_string] = {}
 		land_app[r_string]['OBJECTID'] = r_string
-		land_app[r_string]['COUNTY'] = Fetch(rangelands, 'OBJECTID', rangeland, 'COUNTY')
+		# toggle this on to collect County info. not in the second rangelands dataset
+		# land_app[r_string]['COUNTY'] = Fetch(rangelands, 'OBJECTID', rangeland, 'COUNTY') #FLAG!
 		for facility in facilities['SwisNo']:
 			# print("from facility: ", facility)
 			x = f2r[facility][rangeland]
