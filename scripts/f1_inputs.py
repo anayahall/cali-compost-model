@@ -62,18 +62,32 @@ print("LOADING DATA")
 
 
 # # solid waste inventory data (CLEANED)
-# swis =  gpd.read_file(opj(DATA_DIR, "clean/clean_swis.shp"))
+swis =  gpd.read_file(opj(DATA_DIR, "clean/clean_swis.shp"))
 
 
-# # Minimize geodataframe to dataframe with just fields of interest
-# swis_df = swis[['SwisNo', 'Name', 'Latitude', 'Longitude', 'cap_m3', 'AcceptedWa']]
+# Minimize geodataframe to dataframe with just fields of interest
+swis_df = swis[['SwisNo', 'Name', 'Latitude', 'Longitude', 'cap_m3', 'AcceptedWa']]
 
-# # rename lat and lon for easier plotting
-# swis_df.rename(columns = {'Latitude': 'lat', 'Longitude': 'lon'}, inplace=True)
+# rename lat and lon for easier plotting
+swis_df.rename(columns = {'Latitude': 'lat', 'Longitude': 'lon'}, inplace=True)
 
-# # may just want foodwaste for adding to the plot
-# foodwaste_facilities = swis_df[swis_df['AcceptedWa'].str.contains("Food", na=False)]
-# print("swis loaded")
+# may just want foodwaste for adding to the plot
+foodwaste_facilities = swis_df[swis_df['AcceptedWa'].str.contains("Food", na=False)]
+print("swis loaded")
+
+print("add region variable to swis")
+# add region variable to swis and group
+swis_county_region = add_region_variable(swis, 'County')
+swis_region = swis_county_region.groupby('Region', as_index = False).sum()
+
+# doesn't have MOUNTAIN NORTH -- need to add manually
+new_row = {'Region':'MountainNorth', 'Latitude' : 0, 'Longitude' : 0, 'Throughput' : 0, 
+            'Capacity': 0, 'Acreage' : 0, 'cap_m3' : 0}
+#append row to the dataframe
+swis_region = swis_region.append(new_row, ignore_index=True)
+
+# add tons back in for plotting?
+swis_region['cap_tons'] = swis_region['cap_m3'] * (1.30795*(1/2.24))
 
 
 
@@ -131,35 +145,58 @@ print("start dot plot....")
 #dot plot by region
 
 msw_region = msw_county_region.groupby(['Region', 'subtype'], as_index=False).sum()
+msw_region.sort_values('wt', inplace=True)
 
-###########Example plot
+# Regions
+X = []
+# food waste values
+F = []
+# swis capacity
+S = []
 
-# schools = ["Brown", "NYU", "Notre Dame", "Cornell", "Tufts", "Yale",
-#            "Dartmouth", "Chicago", "Columbia", "Duke", "Georgetown",
-#            "Princeton", "U.Penn", "Stanford", "MIT", "Harvard"]
+for r in msw_region[msw_region['subtype']=='MSW_food']['Region']:
+    X.append(r)
+    f = Fetch(msw_region[msw_region['subtype']=='MSW_food'], 'Region', r, 'wt')
+    s = Fetch(swis_region, 'Region', str(r), 'cap_tons')
+    S.append(s)
+    F.append(f)
+    print(r, "--food waste -- ", f)
 
-# fig = plt.subplots()
-# plt.scatter(
-#     x=[72, 67, 73, 80, 76, 79, 84, 78, 86, 93, 94, 90, 92, 96, 94, 112],
-#     y=schools,
-#     marker=dict(color="crimson", size=12),
-#     mode="markers",
-#     name="Women",
-# )
+# green waste
+G = []
+for r in msw_region[msw_region['subtype']=='MSW_green']['Region']:
+    g = Fetch(msw_region[msw_region['subtype']=='MSW_green'], 'Region', r, 'wt')
+    G.append((g*0.95))
+    print(r, "--green waste -- ", g)
 
-# plt.scatter(
-#     x=[92, 94, 100, 107, 112, 114, 114, 118, 119, 124, 131, 137, 141, 151, 152, 165],
-#     y=schools,
-#     marker=dict(color="gold", size=12),
-#     mode="markers",
-#     name="Men",
-# )
+# to match colors from QGIS
+# food waste: #1f78b4
+fw_col = '#1f78b4'
+# green waste: #33a02c
+gw_col = '#33a02c'
+# composters: #9b41d7
+swis_col = '#9b41d7' 
 
-# plt.update_layout(title="Gender Earnings Disparity",
-#                   xaxis_title="Annual Salary (in thousands)",
-#                   yaxis_title="School")
 
+# Draw plot
+fig, ax = plt.subplots(figsize=(6,5), dpi= 300)
+ax.hlines(y=X, xmin=0, xmax=2750000, color='gray', alpha=0.7, linewidth=1, linestyles='dashdot')
+ax.scatter(y=X, x=F, s=150, color=fw_col, alpha=0.7)
+ax.scatter(y=X, x=G, s=150, color=gw_col, alpha=0.7)
+ax.scatter(y=X, x=S, marker = 'x', color = swis_col, alpha = 0.9)
+
+# Title, Label, Ticks and Ylim
+# ax.set_title('Regional Biomass Inventory & Compost Capacity', fontdict={'size':22})
+ax.set_xlabel('Tonnes of Organic Material')
+ax.set_yticks(X)
+ax.set_yticklabels(X.title(), fontdict={'horizontalalignment': 'right'})
+plt.subplots_adjust(left=0.28)
+# ax.set_xlim(10, 27)
 # plt.show()
 
-# plot.show()
+
+# save figure
+plt.savefig('plots/Figure1_inset')
+
+
 
