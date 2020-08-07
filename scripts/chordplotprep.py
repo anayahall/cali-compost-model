@@ -5,15 +5,19 @@ import pickle
 import os
 import geopandas as gpd
 
-# read in data:
-os.chdir('../results')
+from region import add_region_variable
 
-with open('c2f_FG_50p.p', 'rb') as f:
+# read in data:
+# os.chdir('../results')
+
+print("loading data")
+with open('results/c2f_FG_50p.p', 'rb') as f:
     c2f = pickle.load(f)
     
-with open('f2r_FG_50p.p', 'rb') as f:
+with open('results/f2r_FG_50p.p', 'rb') as f:
     f2r = pickle.load(f)    
 
+print("converting to df")
 # convert to dataframe
 c2fdf_swisno = pd.DataFrame.from_dict(c2f)
 # reset index
@@ -27,7 +31,7 @@ names = pd.DataFrame(names, columns = ['County'])
 # names = c2fdf.iloc[:,0] # old way of doing
 
 # load swis data, keep only swis id number and county
-swis = gpd.read_file("../data/clean/clean_swis.shp")
+swis = gpd.read_file("data/clean/clean_swis.shp")
 swis = swis[['SwisNo', 'County']]
 
 # merge swis to get county where each facility is located
@@ -48,8 +52,9 @@ c2fdf.rename(columns={'County': 'SWIS_County'}, inplace = True)
 c2fdf = c2fdf.groupby(['SWIS_County'], as_index = False).sum()
 
 
+print("reshaping")
 # # reshape!
-c2fdf = pd.melt(c2fdf, id_vars=['SWIS_County'],var_name = 'MSW_County', value_name='value')
+c2fdf_melted = pd.melt(c2fdf, id_vars=['SWIS_County'],var_name = 'MSW_County', value_name='value')
 # c2fdf
 
 c2fdf = c2fdf_melted.groupby(['MSW_County', 'SWIS_County'], as_index = False).sum()
@@ -61,16 +66,27 @@ c2fdf.reset_index(inplace=True)
 c2fdf.rename(columns={'MSW_County': 'from', 'SWIS_County': 'to'}, inplace=True)
 
 # #then subset c2fdf to prepare to turn into matrix
-# c2fdf = c2fdf.iloc[:, 1:]
+c2fdf = c2fdf.iloc[:, 1:]
 
-# matrix = c2fdf.to_numpy() # turn into matrix array
-# rows are FACILITIES (incoming waste), columns are MUNIS (outgoing waste)
-# matrix
+#save county to county flow
+c2fdf.to_csv('results/chord/C2F_FG_50.csv')
 
-# c2fdf.columns.shape
-# names = names['County'].tolist()
-# type(names[0])
-# names
 
-# SAVE VALUES TO CSV FOR PLOTTING IN R
-# c2fdf.to_csv('chord/C2F_FG_50.csv')
+flow_reg = add_region_variable(c2fdf, 'from')
+flow_reg.rename(columns={'Region':'from_region'}, inplace = True)
+
+
+flow_reg = add_region_variable(flow_reg, 'to')
+flow_reg.rename(columns={'Region':'to_region'}, inplace = True)
+
+
+
+flow_reg_group = flow_reg.groupby(['from_region', 'to_region'], as_index = False).sum()
+
+
+
+# SAVE REGIONAL VALUES TO CSV FOR PLOTTING IN R
+flow_reg_group.to_csv('results/chord/C2F_FG_50_region.csv')
+
+
+## next do for F2R! 
