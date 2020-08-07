@@ -1,4 +1,5 @@
-region.py
+# region.py
+import numpy as np
 
 # function to group by region
 def add_region_variable(df, county_column):
@@ -32,7 +33,7 @@ def add_region_variable(df, county_column):
     SouthernCalInland = ['SoCalInland', 'Imperial', 'Riverside', 'San Bernardino']
 
 
-    regions = np.array([bayArea, CentralCoast, CentralValleyN,
+    regions = np.array([BayArea, CentralCoast, CentralValleyN,
                        CentralValleyS, CoastalN, MountainS,
                        MountainN, SouthernCalCoastal, SouthernCalInland])
 

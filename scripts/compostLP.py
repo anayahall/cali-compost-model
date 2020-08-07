@@ -29,7 +29,7 @@ DEBUG = True
 CENSUSTRACT = False
 
 # include crops?
-CROPLAND = False
+CROPLAND = True
 ############################################################
 
 # set data directories (relative)
@@ -193,7 +193,7 @@ print("facility data loaded") if (DEBUG == True) else ()
 # RANGELANDS 
 ############################################################
 # Import rangelands
-print("about to import rangelands") if (DEBUG == True) else ()
+# print("about to import rangelands") if (DEBUG == True) else ()
 rangelands = gpd.read_file(opj(DATA_DIR, "raw/CA_FMMP_G/gl_bycounty/grazingland_county.shp"))
 rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
 
@@ -211,6 +211,42 @@ rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m
 # estimate centroid
 rangelands['centroid'] = rangelands['geometry'].centroid 
 print("rangelands loaded") if (DEBUG == True) else ()
+
+
+##############################################################
+# NEW RANGELAND DATA #
+# ##############################################################
+# # UPDATE 08032020 -- bring in new rangelands (and keep naming convention)
+# print("bringing in second rangeland data file") if (DEBUG == True) else ()
+# rangelands = gpd.read_file(opj(DATA_DIR, "rangelandareas/ds553.shp"))
+# rangelands = rangelands.to_crs(epsg=4326)
+
+# rangelands['OBJECTID'] = rangelands.index
+
+
+# # Each planning unit falls into one of 3 groups.
+# # 0. Not included in priority areas.
+# # 1. Important for rangeland goals - selected 3-7 times of 10.
+# # 2. Critical for rangeland goals- selected 8-10 times
+
+
+# # convert area capacity into volume capacity
+# rangelands['area_ha'] = rangelands['Shape_area']/10000 # convert area in m2 to hectares
+# rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
+# # # estimate centroid
+# rangelands['centroid'] = rangelands['geometry'].centroid 
+
+
+# # optional - omit non-priority land:
+# rangelands = rangelands[rangelands['Priority'] != 0]
+
+# # run full model below and see if it changes numbers dramatically, 
+# # then think through how to rename these such that it fits with croplands too. 
+# # idea: rangelands have priority values, maybe crops could be assigned these?
+
+
+
+
 
 ############################################################
 # SUBSET!! for testing functions
@@ -250,7 +286,8 @@ def SolveModel(scenario_name = None,
 
 	# data sources
 	msw = msw, 
-	landuse = rangelands, 
+	landuse = rangelands,
+	# priority = 1,  
 	facilities = facilities,
 	
 	# Scenario settings
@@ -308,6 +345,7 @@ def SolveModel(scenario_name = None,
 	# #Variables
 	print("--setting constant parameters") if (DEBUG == True) else ()
 
+
 	print("-- setting feedstock and disposal") if (DEBUG == True) else ()
 	# change supply constraint by feedstock selected
 	if feedstock == 'food_and_green':
@@ -329,6 +367,17 @@ def SolveModel(scenario_name = None,
 		# make green!!
 		msw = msw[(msw['subtype'] == "MSW_green")]
 		msw['disposal'] = msw['wt'] / (1.30795*(1/2.24))
+
+	# # # Priority settng for rangelands 
+	# critical only
+	# if priority == 2:
+	# 	landuse = landuse[landuse['Priority'] == 2]
+	# # critical and semi critical
+	# elif priority == 1: 
+		# landuse = landuse[landuse['Priority'] != 0]
+	# # not included in planning goals
+	# elif priority == 0: 
+	# 	landuse = landuse[{(landuse['Priority'] == 0)}]
 
 ############################################################
 
@@ -354,15 +403,15 @@ def SolveModel(scenario_name = None,
 	for facility in facilities['SwisNo']:
 		f2r[facility] = {}
 		floc = Fetch(facilities, 'SwisNo', facility, 'geometry')
-		for rangeland in rangelands['OBJECTID']:
-			rloc = Fetch(rangelands, 'OBJECTID', rangeland, 'centroid')
-			f2r[facility][rangeland] = {}
+		for land in landuse['OBJECTID']:
+			rloc = Fetch(landuse, 'OBJECTID', land, 'centroid')
+			f2r[facility][land] = {}
 			# define decision variable here
-			f2r[facility][rangeland]['quantity'] = cp.Variable()
+			f2r[facility][land]['quantity'] = cp.Variable()
 			# and again grab distance for associated emis/cost
 			dist = Distance(floc,rloc)
-			f2r[facility][rangeland]['trans_emis'] = dist*detour_factor*kilometres_to_emissions
-			f2r[facility][rangeland]['trans_cost'] = dist*detour_factor*f2r_trans_cost
+			f2r[facility][land]['trans_emis'] = dist*detour_factor*kilometres_to_emissions
+			f2r[facility][land]['trans_cost'] = dist*detour_factor*f2r_trans_cost
 
 	############################################################
 
@@ -397,11 +446,11 @@ def SolveModel(scenario_name = None,
 	# EMISSIONS FROM F TO R (and at Rangeland)
 	for facility in facilities['SwisNo']:
 		print("SW facility: ", facility, "--to RANGELAND") if (DEBUG == True) else ()
-		for rangeland in rangelands['OBJECTID']:
-			print('f2r - rangeland #: ', rangeland) if (DEBUG == True) else ()
-			x = f2r[facility][rangeland]
+		for land in landuse['OBJECTID']:
+			print('f2r - land #: ', land) if (DEBUG == True) else ()
+			x = f2r[facility][land]
 			applied_amount = x['quantity']
-			# emissions due to transport of compost from facility to rangelands
+			# emissions due to transport of compost from facility to landuse
 			obj += x['trans_emis']* applied_amount
 			# emissions due to application of compost by manure spreader
 			obj += spreader_ef * applied_amount
@@ -439,23 +488,23 @@ def SolveModel(scenario_name = None,
 		# otherwise, use usual demand constraints
 		for facility in facilities['SwisNo']:
 			temp = 0
-			for rangeland in rangelands['OBJECTID']:
-				x = f2r[facility][rangeland]
+			for land in landuse['OBJECTID']:
+				x = f2r[facility][land]
 				temp += x['quantity']
 				cons += [0 <= x['quantity']]              #Each quantity must be >=0
 			cons += [temp <= Fetch(facilities, 'SwisNo', facility, 'facility_capacity')]  # sum of each facility must be less than capacity        
 
 	# end-use  constraint capacity
-	for rangeland in rangelands['OBJECTID']:
-		print("rangeland constraints: ", rangeland) if (DEBUG == True) else ()
+	for land in landuse['OBJECTID']:
+		print("land constraints: ", land) if (DEBUG == True) else ()
 		temp = 0
 		for facility in facilities['SwisNo']:
-			x = f2r[facility][rangeland]
+			x = f2r[facility][land]
 			temp += x['quantity']
 			#TODO - is this constraint necessary - or repetitive of above
 			cons += [0 <= x['quantity']]				# value must be >=0
-		# rangeland capacity constraint (no more can be applied than 0.25 inches)
-		cons += [temp <= Fetch(rangelands, 'OBJECTID', rangeland, 'capacity_m3')]
+		# land capacity constraint (no more can be applied than 0.25 inches)
+		cons += [temp <= Fetch(landuse, 'OBJECTID', land, 'capacity_m3')]
 
 
 	# balance facility intake to facility output
@@ -467,10 +516,10 @@ def SolveModel(scenario_name = None,
 			print("muni: ", muni) if (DEBUG == True) else ()
 			x = c2f[muni][facility]
 			temp_in += x['quantity']	# sum of intake into facility from counties
-		for rangeland in rangelands['OBJECTID']:
-			print("rangeland: ", rangeland) if (DEBUG == True) else ()
-			x = f2r[facility][rangeland]
-			temp_out += x['quantity']	# sum of output from facilty to rangeland
+		for land in landuse['OBJECTID']:
+			print("land: ", land) if (DEBUG == True) else ()
+			x = f2r[facility][land]
+			temp_out += x['quantity']	# sum of output from facilty to land
 		cons += [temp_out == waste_to_compost*temp_in]
 
 	############################################################
@@ -498,25 +547,26 @@ def SolveModel(scenario_name = None,
 	############################################################
 	# print("{0:15} {1:15}".format("Rangeland","Amount"))
 	# for facility in facilities['SwisNo']:
-	#     for rangeland in rangelands['OBJECTID']:
-	#         print("{0:15} {1:15} {2:15}".format(facility,rangeland,f2r[facility][rangeland]['quantity'].value))
+	#     for land in landuse['OBJECTID']:
+	#         print("{0:15} {1:15} {2:15}".format(facility,land,f2r[facility][land]['quantity'].value))
 	############################################################
 
-	# Rangeland area covered (ha) & applied amount by rangeland
+	# Rangeland area covered (ha) & applied amount by land
 	land_app = {}
-	for rangeland in rangelands['OBJECTID']:
-		print("Calculating rangeland area & amount applied for rangeland: ", rangeland) if (DEBUG == True) else ()
-		r_string = str(rangeland)
+	for land in landuse['OBJECTID']:
+		print("Calculating land area & amount applied for land: ", land) if (DEBUG == True) else ()
+		r_string = str(land)
 		applied_volume = 0
 		area = 0
 		temp_transport_emis = 0
 		temp_transport_cost = 0
 		land_app[r_string] = {}
 		land_app[r_string]['OBJECTID'] = r_string
-		land_app[r_string]['COUNTY'] = Fetch(rangelands, 'OBJECTID', rangeland, 'COUNTY')
+		# toggle this on to collect County info. not in the second landuse dataset
+		# land_app[r_string]['COUNTY'] = Fetch(landuse, 'OBJECTID', land, 'COUNTY') #FLAG!
 		for facility in facilities['SwisNo']:
 			# print("from facility: ", facility)
-			x = f2r[facility][rangeland]
+			x = f2r[facility][land]
 			applied_volume += x['quantity'].value
 			temp_transport_emis += applied_volume* x['trans_emis']
 			temp_transport_cost += applied_volume *x['trans_cost']
@@ -602,7 +652,7 @@ def SolveModel(scenario_name = None,
 	#             county_results[v['COUNTY']]['TOTAL_emis'] =  v['application_emis']
 
 			
-	#         # sum of transportation emissions for hauling compost to county's rangelands
+	#         # sum of transportation emissions for hauling compost to county's landuse
 	#         if 'trans_emis' in county_results[county].keys():
 	#             county_results[v['COUNTY']]['trans_emis'] = county_results[v['COUNTY']]['trans_emis'] + v['trans_emis']
 	#             county_results[v['COUNTY']]['TOTAL_emis'] = county_results[v['COUNTY']]['TOTAL_emis'] + v['trans_emis']
@@ -612,7 +662,7 @@ def SolveModel(scenario_name = None,
 	#             county_results[v['COUNTY']]['TOTAL_emis'] = v['trans_emis']
 
 			
-	#         # sum of transportation costs for hauling compost to county's rangelands
+	#         # sum of transportation costs for hauling compost to county's landuse
 	#         if 'trans_cost' in county_results[county].keys():
 	#             county_results[v['COUNTY']]['trans_cost'] = county_results[v['COUNTY']]['trans_cost'] + v['trans_cost']
 	#         else:
@@ -682,11 +732,11 @@ def SolveModel(scenario_name = None,
 
 	for facility in facilities['SwisNo']:
 		print(" > calculating f2r distance cost for facility: ", facility) if (DEBUG == True) else ()
-		for rangeland in rangelands['OBJECTID']:
-			# print("f2r cost for rangeland: ", rangeland)
-			x = f2r[facility][rangeland]
+		for land in landuse['OBJECTID']:
+			# print("f2r cost for land: ", land)
+			x = f2r[facility][land]
 			applied_amount = x['quantity'].value
-			# project_cost due to transport of compost from facility to rangelands
+			# project_cost due to transport of compost from facility to landuse
 			project_cost += x['trans_cost']* applied_amount
 			# project_cost due to application of compost by manure spreader
 			project_cost += spreader_cost * applied_amount
@@ -707,7 +757,7 @@ def SolveModel(scenario_name = None,
 
 	return c2f_values, f2r_values, land_app, cost_millions, CO2mit, abatement_cost
 
-# r = pd.merge(rangelands, rdf, on = "COUNTY")
+# r = pd.merge(landuse, rdf, on = "COUNTY")
 # fac_df = pd.merge(facilities, fac_df, on = "SwisNo")
 
 
