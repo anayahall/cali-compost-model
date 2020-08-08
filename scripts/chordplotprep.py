@@ -144,9 +144,24 @@ frdf = frdf.groupby(['F_County', 'RL_County'], as_index = False).sum()
 
 frdf = frdf[['F_County', 'RL_County', 'value']]
 
+#save at county level 
+frdf.to_csv('results/chord/F2R_FG_50.csv')
 
 
 
+
+
+# amend for region! 
+fr_reg = add_region_variable(frdf, 'F_County')
+fr_reg.rename(columns = {'Region':'from_region'}, inplace = True)
+
+fr_reg = add_region_variable(fr_reg, 'RL_County')
+fr_reg.rename(columns = {'Region': 'to_region'}, inplace = True)
+
+fr_reg_group = fr_reg.groupby(['from_region', 'to_region'], as_index = False).sum()
+
+#save
+fr_reg_group.to_csv('results/chord/F2R_FG_50_region.csv')
 
 
 

@@ -41,5 +41,14 @@ data <- subset(data, select = c('from_region', 'to_region', 'value'))
 
 chordDiagram(data, directional = 1, diffHeight = mm_h(5))
 
+######################################################################
+# Facility to Rangeland (by region!!!)
+######################################################################
 
-# circos.clear()
+# replicate plot - BY REGION
+data <- read.csv(file= 'results/chord/F2R_FG_50_region.csv')
+data$from <- as.character(data$from)
+data$to <- as.character(data$to)
+data <- subset(data, select = c('from_region', 'to_region', 'value'))
+
+chordDiagram(data, directional = 1, diffHeight = mm_h(5))

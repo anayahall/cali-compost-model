@@ -6,7 +6,7 @@ applications as a means of avoiding landfill emissions and sequestering carbon i
 the State's soils. 
 
 ### -- Current Status --
-As of **July 2020**, this project is near completion. The full repo will be made public 
+As of **August 2020**, this project is near completion. The full repo will be made public 
 with a detailed README.md and toy dataset prior to publication.
 
 
