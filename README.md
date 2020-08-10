@@ -7,7 +7,7 @@ the State's soils.
 
 ### -- Current Status --
 As of **August 2020**, this project is near completion. The full repo will be made public 
-with a detailed README.md and toy dataset prior to publication.
+with a detailed README.md, including information on toy dataset creation, prior to publication.
 
 
 ## Details
