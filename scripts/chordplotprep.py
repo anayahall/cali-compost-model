@@ -51,22 +51,26 @@ c2fdf = swis.merge(c2fdf_swisno, on = 'SwisNo')
 c2fdf.rename(columns={'County': 'SWIS_County'}, inplace = True)
 
 # group by county! 
-c2fdf = c2fdf.groupby(['SWIS_County'], as_index = False).sum()
+c2fdf = c2fdf.groupby(['SWIS_County'], 
+    as_index = False).sum()
 
 
 print("reshaping")
 # # reshape!
-c2fdf_melted = pd.melt(c2fdf, id_vars=['SWIS_County'],var_name = 'MSW_County', 
+c2fdf_melted = pd.melt(c2fdf, id_vars=['SWIS_County'],
+    var_name = 'MSW_County', 
     value_name='value')
 # c2fdf
 
-c2fdf = c2fdf_melted.groupby(['MSW_County', 'SWIS_County'], as_index = False).sum()
+c2fdf = c2fdf_melted.groupby(['MSW_County', 'SWIS_County'], 
+    as_index = False).sum()
 
 # # c2fdf['value_scaled'] = round(c2fdf['value'] * 1/1000,-1)
 c2fdf = c2fdf[c2fdf['value']!=0]
 c2fdf.reset_index(inplace=True)
 
-c2fdf.rename(columns={'MSW_County': 'from', 'SWIS_County': 'to'}, inplace=True)
+c2fdf.rename(columns={'MSW_County': 'from', 'SWIS_County': 'to'}, 
+    inplace=True)
 
 # #then subset c2fdf to prepare to turn into matrix
 c2fdf = c2fdf.iloc[:, 1:]
@@ -84,7 +88,8 @@ flow_reg.rename(columns={'Region':'to_region'}, inplace = True)
 
 
 
-flow_reg_group = flow_reg.groupby(['from_region', 'to_region'], as_index = False).sum()
+flow_reg_group = flow_reg.groupby(['from_region', 'to_region'], 
+    as_index = False).sum()
 
 
 
@@ -106,8 +111,10 @@ frdf.rename(columns={'index':'OBJECTID'},inplace=True)
 
 # Import rangelands
 # print("about to import rangelands") if (DEBUG == True) else ()
-rangelands = gpd.read_file(opj(DATA_DIR, "raw/CA_FMMP_G/gl_bycounty/grazingland_county.shp"))
-rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
+rangelands = gpd.read_file(opj(DATA_DIR, 
+    "raw/CA_FMMP_G/gl_bycounty/grazingland_county.shp"))
+rangelands = rangelands.to_crs(epsg=4326) 
+# make sure this is read in degrees (WGS84)
 
 # Fix county names in RANGELANDS! 
 countyIDs = pd.read_csv(opj(DATA_DIR, "interim/CA_FIPS_wcode.csv"), 
@@ -118,7 +125,8 @@ rangelands = pd.merge(rangelands, countyIDs, on = 'county_nam')
 rangelands = rangelands[['OBJECTID', 'COUNTY']]
 
 #RESHAPE
-frdf_melted = pd.melt(frdf, id_vars=['OBJECTID'], var_name = 'SwisNo', 
+frdf_melted = pd.melt(frdf, id_vars=['OBJECTID'], 
+    var_name = 'SwisNo', 
     value_name = 'value')
 
 
@@ -132,7 +140,8 @@ frdf_merged = pd.merge(frdf_melted, rangelands, on = 'OBJECTID')
 frdf_merged = frdf_merged[frdf_merged['value']!=0]
 
 # before reshaping collapse by COUNTY
-frdf_swisno = frdf_merged.groupby(['COUNTY', 'SwisNo'], as_index = False).sum()
+frdf_swisno = frdf_merged.groupby(['COUNTY', 'SwisNo'], 
+    as_index = False).sum()
 
 frdf_swisno.rename(columns={'COUNTY':'RL_County'}, inplace = True)
 
@@ -158,7 +167,8 @@ fr_reg.rename(columns = {'Region':'from_region'}, inplace = True)
 fr_reg = add_region_variable(fr_reg, 'RL_County')
 fr_reg.rename(columns = {'Region': 'to_region'}, inplace = True)
 
-fr_reg_group = fr_reg.groupby(['from_region', 'to_region'], as_index = False).sum()
+fr_reg_group = fr_reg.groupby(['from_region', 'to_region'], 
+    as_index = False).sum()
 
 #save
 fr_reg_group.to_csv('results/chord/F2R_FG_50_region.csv')
