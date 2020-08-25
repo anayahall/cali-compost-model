@@ -108,11 +108,11 @@ def SaveModelVars(c2f, f2r):
 # ############################################################
 # this script loads the data used in the analysis
 # requires original shapefiles too large to host on github
-# from dataload import msw, rangelands, facilities
+from dataload import msw, rangelands, facilities
 
 # this script generates a set of toy data that will allow users to 
 # run the optimization model below without the original shapefiles
-from toydata import msw, rangelands, facilities
+# from toydata import msw, rangelands, facilities
 ############################################################
 
 
