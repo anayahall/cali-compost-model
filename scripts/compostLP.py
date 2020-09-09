@@ -268,12 +268,12 @@ def SolveModel(scenario_name = None,
 	# emissions due to waste remaining in muni
 	for muni in msw['muni_ID']:
 		count += 1
-		print("muni ID: ", muni, " ## ", count,  "--AVOIDED LANDFILL EMISSIONS") if (DEBUG == True) else ()
-
-		# total_waste = Fetch(counties, 'COUNTY', county, 'disposal_cap')
+		print("muni ID: ", muni, " ## ", count,  "-- (AVOIDED) LANDFILL EMISSIONS") if (DEBUG == True) else ()
+		county_disposal = Fetch(msw, 'muni_ID', muni, 'disposal')
 		temp = 0
 		for facility in facilities['SwisNo']:
 			print("c2f - facility: ", facility) if (DEBUG == True) else ()
+			#grab quantity and sum for each county
 			x    = c2f[muni][facility]
 			temp += x['quantity']
 			# emissions due to transport of waste from county to facility 
@@ -281,8 +281,8 @@ def SolveModel(scenario_name = None,
 			# emissions due to processing compost at facility
 			obj += x['quantity']*process_emis
 	#    temp = sum([c2f[muni][facility]['quantity'] for facilities in facilities['SwisNo']]) #Does the same thing
-		obj += landfill_ef*(0 - temp) #FLAG
-		# obj += landfill_ef*(total_waste - temp)
+		obj += landfill_ef*(-temp) #AVOIDED Landfill emissions
+		obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
 
 	print("OBJ SIZE (C2f): ", sys.getsizeof(obj)) if (DEBUG == True) else ()
 

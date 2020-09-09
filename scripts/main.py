@@ -19,7 +19,7 @@ DEBUG = True
 # Send email results! 
 SEND_EMAIL = False
 #single run?
-TEST_RUN = False
+TEST_RUN = True
 ############################################################
 
 print(" - main - packages loaded - import compost LP script now") if (DEBUG == True) else ()
