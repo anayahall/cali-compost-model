@@ -7,6 +7,7 @@ WORKDIR /usr/src/app
 
 COPY ./scripts/main.py /usr/src/app/main.py
 COPY ./scripts/compostLP.py /usr/src/app/compostLP.py
+COPY ./scripts/dataload.py /usr/src/app/dataload.py
 COPY ./scripts/california_cropland_cleaning.py /usr/src/app/california_cropland_cleaning.py
 COPY ./data /usr/src/app/data
 COPY ./requirements.txt /usr/src/app/requirements.txt
