@@ -282,7 +282,7 @@ def SolveModel(scenario_name = None,
 			obj += x['quantity']*process_emis
 	#    temp = sum([c2f[muni][facility]['quantity'] for facilities in facilities['SwisNo']]) #Does the same thing
 		obj += landfill_ef*(-temp) #AVOIDED Landfill emissions
-		obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
+		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
 
 	print("OBJ SIZE (C2f): ", sys.getsizeof(obj)) if (DEBUG == True) else ()
 
