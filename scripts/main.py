@@ -17,9 +17,9 @@ import yagmail
 # Change this to activate/decativate print statements throughout
 DEBUG = True
 # Send email results! 
-SEND_EMAIL = False
+SEND_EMAIL = True
 #single run?
-TEST_RUN = True
+TEST_RUN = False
 ############################################################
 
 print(" - main - packages loaded - import compost LP script now") if (DEBUG == True) else ()

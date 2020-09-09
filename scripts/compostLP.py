@@ -20,7 +20,7 @@ from california_cropland_cleaning import cleancropdata
 
 ############################################################
 # Change this to subset the data easily for running locally
-SUBSET = True
+SUBSET = False
 
 # Change this to activate/decativate print statements throughout
 DEBUG = True
