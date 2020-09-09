@@ -19,7 +19,7 @@ DEBUG = True
 # Send email results! 
 SEND_EMAIL = False
 #single run?
-TEST_RUN = False
+TEST_RUN = True
 ############################################################
 
 print(" - main - packages loaded - import compost LP script now") if (DEBUG == True) else ()
@@ -91,7 +91,8 @@ print(" ** SCENARIO ** : FG 100 aka ", run_name) if (DEBUG == True) else ()
 
 # RUN THE MODEL!!!
 c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
-    feedstock = "food_and_green")
+    feedstock = "food_and_green",
+    disposal_rate = 0.5)
 
 # Send EMAIL w results
 PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)

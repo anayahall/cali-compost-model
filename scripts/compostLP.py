@@ -306,7 +306,7 @@ def SolveModel(scenario_name = None,
 
 
 	# Set disposal cap for use in constraints
-	msw['disposal_cap'] = (disposal_rate) * msw['disposal']
+	msw['disposal_minimum'] = (disposal_rate) * msw['disposal']
 
 	#Constraints
 	cons = []
@@ -322,7 +322,8 @@ def SolveModel(scenario_name = None,
 			x    = c2f[muni][facility]
 			temp += x['quantity']
 			cons += [0 <= x['quantity']]              #Quantity must be >=0
-		cons += [temp <= Fetch(msw, 'muni_ID', muni, 'disposal_cap')]   #Sum for each county must be <= county production
+		cons += [temp <= Fetch(msw, 'muni_ID', muni, 'disposal')]   #Sum for each county must be <= county production
+		cons += [temp >= Fetch(msw, 'muni_ID', muni, 'disposal_minimum')]   #Sum for each county must be <= county production
 
 	facilities['facility_capacity'] = capacity_multiplier * facilities['cap_m3']
 
