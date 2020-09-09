@@ -122,18 +122,18 @@ PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
 
 ############################################################
 
-# NAME SCENARIO
-run_name = "FG_75p"
+# # NAME SCENARIO
+# run_name = "FG_75p"
 
-print(" ** SCENARIO ** : FG 75 aka ", run_name) if (DEBUG == True) else ()
+# print(" ** SCENARIO ** : FG 75 aka ", run_name) if (DEBUG == True) else ()
 
-# RUN THE MODEL!!!
-c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
-    feedstock = "food_and_green",
-    disposal_rate = 0.75)
+# # RUN THE MODEL!!!
+# c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+#     feedstock = "food_and_green",
+#     disposal_rate = 0.75)
 
-# Send EMAIL w results
-PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+# # Send EMAIL w results
+# PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
 
 ############################################################
 
