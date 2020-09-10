@@ -20,7 +20,7 @@ from california_cropland_cleaning import cleancropdata
 
 ############################################################
 # Change this to subset the data easily for running locally
-SUBSET = False
+SUBSET = True
 
 # Change this to activate/decativate print statements throughout
 DEBUG = True
@@ -87,8 +87,11 @@ def SaveModelVars(c2f, f2r):
 		for facility in c2f[muni].keys():
 			# print("FACILITY: ", facility)
 			c2f_values[muni][facility] = {}
-			x = c2f[muni][facility]['quantity'].value
-			c2f_values[muni][facility] = (round(int(x)))
+			if c2f[muni][facility]['quantity'].value is not None:
+				v = c2f[muni][facility]['quantity'].value  
+			else:
+				v = 0.0
+			c2f_values[muni][facility] = (round(int(v)))
 
 
 	f2r_values = {}
@@ -97,7 +100,10 @@ def SaveModelVars(c2f, f2r):
 		f2r_values[facility] = {}
 		for rangeland in f2r[facility].keys():
 			f2r_values[facility][rangeland] = {}
-			x = f2r[facility][rangeland]['quantity'].value
+			if f2r[facility][rangeland]['quantity'].value is not None:
+				x = f2r[facility][rangeland]['quantity'].value
+			else:
+				x = 0.0
 			f2r_values[facility][rangeland] = (round(int(x)))
 
 	return c2f_values, f2r_values
@@ -393,7 +399,11 @@ def SolveModel(scenario_name = None,
 		for facility in facilities['SwisNo']:
 			# print("from facility: ", facility)
 			x = f2r[facility][land]
-			applied_volume += x['quantity'].value
+			if x['quantity'].value is not None:
+				v = x['quantity'].value  
+			else:
+				v = 0.0 
+			applied_volume += v 
 			temp_transport_emis += applied_volume* x['trans_emis']
 			temp_transport_cost += applied_volume *x['trans_cost']
 			area += int(round(applied_volume * (1/63.5)))
@@ -423,11 +433,15 @@ def SolveModel(scenario_name = None,
 			print("c2f - facility: ", facility) if (DEBUG == True) else ()
 			#grab quantity and sum for each county
 			x    = c2f[muni][facility]
-			temp += x['quantity'].value
+			if x['quantity'].value is not None:
+				v = x['quantity'].value  
+			else:
+				v = 0.0
+			temp += v
 			# emissions due to transport of waste from county to facility 
-			total_emis += x['quantity'].value * x['trans_emis']
+			total_emis += v * x['trans_emis']
 			# emissions due to processing compost at facility
-			total_emis += x['quantity'].value * process_emis
+			total_emis += v * process_emis
 	#    temp = sum([c2f[muni][facility]['quantity'] for facilities in facilities['SwisNo']]) #Does the same thing
 		total_emis += landfill_ef*(-temp) #AVOIDED Landfill emissions
 		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
@@ -440,7 +454,10 @@ def SolveModel(scenario_name = None,
 		for land in landuse['OBJECTID']:
 			print('f2r - land #: ', land) if (DEBUG == True) else ()
 			x = f2r[facility][land]
-			applied_amount = x['quantity'].value
+			if x['quantity'].value is not None:
+				applied_amount = x['quantity'].value  
+			else:
+				applied_amount = 0.0 
 			# emissions due to transport of compost from facility to landuse
 			total_emis += x['trans_emis']* applied_amount
 			# emissions due to application of compost by manure spreader
