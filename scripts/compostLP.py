@@ -19,17 +19,9 @@ from california_cropland_cleaning import cleancropdata
 #from swis_preprocessing import LoadAndCleanSWIS #TODO
 
 ############################################################
-# Change this to subset the data easily for running locally
-SUBSET = False
-
 # Change this to activate/decativate print statements throughout
 DEBUG = True
 
-# Change this for counties vs census tracts (true is muni, false is counties)
-CENSUSTRACT = True
-
-# include crops?
-CROPLAND = True
 ############################################################
 
 # set data directories (relative)
