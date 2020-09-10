@@ -26,7 +26,7 @@ SUBSET = False
 DEBUG = True
 
 # Change this for counties vs census tracts (true is muni, false is counties)
-CENSUSTRACT = False
+CENSUSTRACT = True
 
 # include crops?
 CROPLAND = True
