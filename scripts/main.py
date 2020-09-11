@@ -25,7 +25,7 @@ DEBUG = True
 
 LOCAL = False
 
-LANDUSE = crops
+CROPLANDS = True
 
 if LOCAL == True:
     # Send email results! 
@@ -104,7 +104,7 @@ from dataload import msw, rangelands, facilities, croplands
 
 
 
-if LANDUSE == ranges:
+if CROPLANDS == False:
 
 
 
@@ -370,7 +370,7 @@ if LANDUSE == ranges:
 ###################################################################
 
 
-elif LANDUSE == crops: 
+elif CROPLANDS == True: 
 
     # NAME SCENARIO
     run_name = 'FG_50p_CL'
