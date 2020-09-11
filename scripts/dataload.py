@@ -28,10 +28,12 @@ from california_cropland_cleaning import cleancropdata
 LOCAL = False
 
 if LOCAL == True:
-	# Change this to subset the data easily for running locally
-	SUBSET = True
+    print("RUNNING LOCALLY - do subset")
+    # Change this to subset the data easily for running locally
+    SUBSET = True
 else:
-	SUBSET = False
+    print("RUNNING ON AWS - full dataset")
+    SUBSET = False
 
 
 # other toggles:
@@ -41,8 +43,6 @@ DEBUG = True
 # Change this for counties vs census tracts (true is muni, false is counties)
 CENSUSTRACT = False
 
-# include crops?
-CROPLAND = True
 ############################################################
 
 # set data directories (relative)
@@ -201,9 +201,8 @@ print("rangelands loaded") if (DEBUG == True) else ()
 #############################################################
  
 # # # Import croplands
-if CROPLAND == True:
-	croplands = cleancropdata(opj(DATA_DIR, 
-		"raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
+croplands = cleancropdata(opj(DATA_DIR, 
+	"raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
 
 
 
@@ -217,7 +216,7 @@ if SUBSET == True:
 	msw = msw[0:(2*subset_size)]
 	facilities = facilities[0:subset_size]
 	rangelands = rangelands[0:subset_size]
-	# croplands = croplands[0:subset_sizese]
+	croplands = croplands[0:subset_size]
 
 ############################################################
 # raise Exception("data loaded - pre optimization")

@@ -27,13 +27,16 @@ LOCAL = False
 
 CROPLANDS = True
 
+############################################################
 if LOCAL == True:
+    print("RUNNING LOCALLY - no email, just one one")
     # Send email results! 
     SEND_EMAIL = False
     #single run?
     TEST_RUN = True
     # also change ON DATALOAD SCRIPT
 else: 
+    print("RUNNING ON AWS - yes email, many runs")
     SEND_EMAIL = True
     TEST_RUN = False
 ############################################################
@@ -105,8 +108,7 @@ from dataload import msw, rangelands, facilities, croplands
 
 
 if CROPLANDS == False:
-
-
+    print("RUNNING SCENARIOS FOR RANGELANDS")
 
     # NAME SCENARIO
     run_name = 'FG_50p'
@@ -371,7 +373,9 @@ if CROPLANDS == False:
 
 
 elif CROPLANDS == True: 
+    print("RUNNING SCENARIOS FOR CROPLANDS")
 
+    ############################################################
     # NAME SCENARIO
     run_name = 'FG_50p_CL'
 
@@ -386,7 +390,10 @@ elif CROPLANDS == True:
     # Send EMAIL w results
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
 
+    if (TEST_RUN == True):
+        raise Exception("one run!!!") 
 
+    ############################################################
     # NAME SCENARIO
     run_name = "FG_100p_CL"
 

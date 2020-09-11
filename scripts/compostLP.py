@@ -448,7 +448,7 @@ def SolveModel(scenario_name = None,
 
 	# EMISSIONS FROM F TO R (and at Rangeland)
 	for facility in facilities['SwisNo']:
-		print("SW facility: ", facility, "--to RANGELAND") if (DEBUG == True) else ()
+		print("SW facility: ", facility, "--to LAND") if (DEBUG == True) else ()
 		for land in landuse['OBJECTID']:
 			print('f2r - land #: ', land) if (DEBUG == True) else ()
 			x = f2r[facility][land]
