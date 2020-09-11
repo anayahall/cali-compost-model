@@ -478,8 +478,10 @@ def SolveModel(scenario_name = None,
 	print("*********************************************")
 	print("CO2 Mitigated (MMt CO2eq) = {0}".format(CO2mit))
 
-	# val is in terms of dollars
+	# val is in terms of dollars, total emis is in kg
 	result = val/total_emis
+	# result is in $ per kg
+	#convert to $ per ton for abatement cost!!
 	abatement_cost = (-result*1000)
 	print("*********************************************")
 	print("$/tCO2e MITIGATED: ", abatement_cost)
