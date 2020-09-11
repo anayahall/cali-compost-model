@@ -1,3 +1,9 @@
+# THIS IS THE MAIN SCRIPT FROM WHICH THE COMPOSTLP MODEL IS CALLED
+# when running locally (primarily for testing) set LOCAL = TRUE
+# this will subset the data to run more quickly
+# when running on AWS set LOCAL = FALSE
+# this will run the full dataset
+
 
 import cvxpy as cp
 import numpy as np
@@ -16,10 +22,18 @@ import yagmail
 ############################################################
 # Change this to activate/decativate print statements throughout
 DEBUG = True
-# Send email results! 
-SEND_EMAIL = True
-#single run?
-TEST_RUN = False
+
+LOCAL = True
+
+if LOCAL == True:
+    # Send email results! 
+    SEND_EMAIL = False
+    #single run?
+    TEST_RUN = True
+    # also change ON DATALOAD SCRIPT
+else: 
+    SEND_EMAIL = True
+    TEST_RUN = False
 ############################################################
 
 print(" - main - packages loaded - import compost LP script now") if (DEBUG == True) else ()
@@ -80,19 +94,30 @@ def PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
     print("-------------------------------------")
     return
 
+
+
+
+
+from dataload import msw, rangelands, facilities, croplands
+
+
+
+
+
+
 ############################################################
 ### RUN SCENARIOS! #########################################
 ############################################################
 
 # NAME SCENARIO
-run_name = "FG_100p"
+run_name = 'FG_50p'
 
-print(" ** SCENARIO ** : FG 100 aka ", run_name) if (DEBUG == True) else ()
+print(" ** SCENARIO ** : HALF DISPOSAL aka ", run_name) if (DEBUG == True) else ()
 
 # RUN THE MODEL!!!
 c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
     feedstock = "food_and_green",
-    disposal_rate = 0.5)
+    disposal_min = 0.5)
 
 # Send EMAIL w results
 PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
@@ -105,15 +130,14 @@ if (TEST_RUN == True):
 
 ############################################################
 
-
 # NAME SCENARIO
-run_name = 'FG_50p'
+run_name = "FG_100p"
 
-print(" ** SCENARIO ** : HALF DISPOSAL aka ", run_name) if (DEBUG == True) else ()
+print(" ** SCENARIO ** : FG 100 aka ", run_name) if (DEBUG == True) else ()
 
 # RUN THE MODEL!!!
 c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,
-    disposal_rate = 0.50, 
+    disposal_min = 1.0, 
     feedstock = 'food_and_green')
 
 # Send EMAIL w results
@@ -130,7 +154,7 @@ print(" ** SCENARIO ** : FG 75 aka ", run_name) if (DEBUG == True) else ()
 # RUN THE MODEL!!!
 c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
     feedstock = "food_and_green",
-    disposal_rate = 0.75)
+    disposal_min = 0.75)
 
 # Send EMAIL w results
 PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
@@ -146,7 +170,7 @@ print(" ** SCENARIO ** : SEQ HIGH aka ", run_name) if (DEBUG == True) else ()
 # RUN THE MODEL!!!
 c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
     feedstock = "food_and_green", 
-    disposal_rate = 0.95, 
+    disposal_min = 0.95, 
     seq_f = -357)
 
 # Send EMAIL w results
@@ -162,7 +186,7 @@ print(" ** SCENARIO ** : Double Capacity aka ", run_name) if (DEBUG == True) els
 # RUN THE MODEL!!!
 c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
     feedstock = "food_and_green", 
-    # disposal_rate = 0.5, 
+    # disposal_min = 0.5, 
     capacity_multiplier = 2)
 
 
@@ -192,7 +216,7 @@ print(" ** SCENARIO ** : food waste under 25 disposal rate aka ", run_name) if (
 
 c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
     feedstock = "food",  
-    disposal_rate = 0.25)   
+    disposal_min = 0.25)   
 
 # Send EMAIL w results
 PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
@@ -205,7 +229,7 @@ print(" ** SCENARIO ** : food waste under 50 disposal rate aka ", run_name) if (
 
 c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,
     feedstock = "food", 
-    disposal_rate = 0.5)
+    disposal_min = 0.5)
 
 # Send EMAIL w results
 PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
@@ -292,7 +316,7 @@ run_name = "landfillEF0"
 
 c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
     feedstock = "food_and_green", 
-    disposal_rate =.5,
+    disposal_min =.5,
     landfill_ef = 0 )
 PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
 

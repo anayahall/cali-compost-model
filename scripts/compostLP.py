@@ -21,7 +21,6 @@ from california_cropland_cleaning import cleancropdata
 ############################################################
 # Change this to activate/decativate print statements throughout
 DEBUG = True
-
 ############################################################
 
 # set data directories (relative)
@@ -104,13 +103,20 @@ def SaveModelVars(c2f, f2r):
 # ############################################################
 # ### LOAD IN DATA ###
 # ############################################################
-# this script loads the data used in the analysis
+# LOAD ACTUAL DATA (LARGE)
+# from dataload import msw, rangelands, facilities, croplands
+# ^^ this script loads the data used in the analysis
 # requires original shapefiles too large to host on github
-from dataload import msw, rangelands, facilities
+# comment out if just testing linear programming model
 
-# this script generates a set of toy data that will allow users to 
+print(" - compostLP - ")
+# LOAD TOY DATA 
+from toydata import msw, rangelands, facilities
+# ^ this script generates a set of toy data that will allow users to 
 # run the optimization model below without the original shapefiles
-# from toydata import msw, rangelands, facilities
+# uncomment if jsut testing linear programming model
+
+
 ############################################################
 
 
@@ -118,7 +124,7 @@ from dataload import msw, rangelands, facilities
 # OPTIMIZATION MODEL       #################################
 ############################################################
 
-print("about to define model") if (DEBUG == True) else ()
+print(" - compostLP - about to define model") if (DEBUG == True) else ()
 
 # Below is the core linear programming model, defined as a function
 def SolveModel(scenario_name = None, 
@@ -132,7 +138,7 @@ def SolveModel(scenario_name = None,
 	facilities = facilities,
 	
 	# Scenario settings
-	disposal_rate = 1,   # percent of waste to include in run
+	disposal_min = 0.00001,   # percent of waste to include in run (cannot be ZERO - will break solver #TODO)
 	fw_reduction = 0,    # food waste reduced/recovered pre-disposal #FLAG is this accounted for ELSEWHERE?
 	ignore_capacity = False, # toggle to ignore facility capacity info
 	capacity_multiplier = 1, # can inflate capacity 
@@ -163,7 +169,7 @@ def SolveModel(scenario_name = None,
 	:param landuse landarea data source
 	:param facilities SWIS data source
 
-	:param disposal_rate percent of waste to include in run (default is 1)
+	:param disposal_min percent of waste to include in run (default is 1)
 	:param fw_reduction food waste reduced/recovered pre-disposal (default is 0) 
 	:param ignore_capacity toggle to ignore facility capacity info (default is FALSE)
 	:param capacity_multiplier scalar multiplier by which to inflate capacity (default is 1)
@@ -290,7 +296,7 @@ def SolveModel(scenario_name = None,
 
 
 	# Set disposal cap for use in constraints
-	msw['disposal_minimum'] = (disposal_rate) * msw['disposal']
+	msw['disposal_minimum'] = (disposal_min) * msw['disposal']
 
 	#Constraints
 	cons = []

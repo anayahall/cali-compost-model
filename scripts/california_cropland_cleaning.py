@@ -35,6 +35,14 @@ def cleancropdata(cropdata):
 	# croplands = cropmap[cropmap['DWR_Standa'].isin(highvaluecrops)==True]
 	croplands = cropmap[cropmap['Crop2014'].isin(highvaluecrops)==True]
 
+	croplands['centroid'] = croplands['geometry'].centroid 
+	# get cropland capacity: rated as 9t/ha for treecrops
+	# 0.58 tons per cubic meter
+	# 9 tons per hectare
+	# m3 = acres * (ha/acres) * (t/ha) * (m3/t)
+	croplands['capacity_m3'] = croplands['Acres'] * (0.404686) * (9) * (1/0.58)
+	croplands.reset_index(inplace = True)
+
 	## Save as shapefile
 	# out = r"clean/CropMap2014_clean.shp"
 	# croplands.to_file(driver='ESRI Shapefile', filename=opj(DATA_DIR, out))

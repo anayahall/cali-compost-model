@@ -1,3 +1,8 @@
+## THIS SCRIPT READS IN ALL OF THE DATA NEEDED TO RUN THE COMPOSTLP SCRIPT
+# when running locally (primarily for testing) set LOCAL = TRUE
+# this will subset the data to run more quickly
+# when running on AWS set LOCAL = FALSE
+# this will run the full dataset
 
 
 import cvxpy as cp
@@ -18,10 +23,18 @@ from california_cropland_cleaning import cleancropdata
 # from biomass_preprocessing import MergeInventoryAndCounty
 #from swis_preprocessing import LoadAndCleanSWIS #TODO
 
-############################################################
-# Change this to subset the data easily for running locally
-SUBSET = False
 
+############################################################
+LOCAL = True
+
+if LOCAL == True:
+	# Change this to subset the data easily for running locally
+	SUBSET = True
+else:
+	SUBSET = False
+
+
+# other toggles:
 # Change this to activate/decativate print statements throughout
 DEBUG = True
 
@@ -145,7 +158,7 @@ rangelands = pd.merge(rangelands, countyIDs, on = 'county_nam')
 # convert area capacity into volume capacity
 rangelands['area_ha'] = rangelands['Shape_Area']/10000 # convert area in m2 to hectares
 rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
-# rangelands['capacity_ton'] = rangelands['area_ha'] * 37.1 # also calculated for tons unit framework
+# rangelands['capacity_ton'] = rangelands['area_ha'] * 37.1 # also calculated for tons unit frameworkcropl
 
 # estimate centroid
 rangelands['centroid'] = rangelands['geometry'].centroid 
@@ -183,7 +196,14 @@ print("rangelands loaded") if (DEBUG == True) else ()
 # # then think through how to rename these such that it fits with croplands too. 
 # # idea: rangelands have priority values, maybe crops could be assigned these?
 
-
+############################################################
+# CROPLANDS
+#############################################################
+ 
+# # # Import croplands
+if CROPLAND == True:
+	croplands = cleancropdata(opj(DATA_DIR, 
+		"raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
 
 
 
@@ -197,16 +217,10 @@ if SUBSET == True:
 	msw = msw[0:(2*subset_size)]
 	facilities = facilities[0:subset_size]
 	rangelands = rangelands[0:subset_size]
+	# croplands = croplands[0:subset_sizese]
 
 ############################################################
 # raise Exception("data loaded - pre optimization")
 ############################################################
 
-############################################################
-# CROPLANDS
-#############################################################
- 
-# # # Import croplands
-if CROPLAND == True:
-	croplands = cleancropdata(opj(DATA_DIR, 
-		"raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
+
