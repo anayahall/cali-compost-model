@@ -23,7 +23,7 @@ import yagmail
 # Change this to activate/decativate print statements throughout
 DEBUG = True
 
-LOCAL = True
+LOCAL = False
 
 if LOCAL == True:
     # Send email results! 

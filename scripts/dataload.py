@@ -25,7 +25,7 @@ from california_cropland_cleaning import cleancropdata
 
 
 ############################################################
-LOCAL = True
+LOCAL = False
 
 if LOCAL == True:
 	# Change this to subset the data easily for running locally
