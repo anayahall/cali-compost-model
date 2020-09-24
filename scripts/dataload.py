@@ -25,7 +25,7 @@ import scipy as sp
 
 
 ############################################################
-LOCAL = True
+LOCAL = False
 
 if LOCAL == True:
     print("RUNNING LOCALLY - do subset")
