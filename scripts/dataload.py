@@ -19,13 +19,13 @@ import shapely as shp
 import geopandas as gpd
 import scipy as sp
 
-from california_cropland_cleaning import cleancropdata
+# from california_cropland_cleaning import cleancropdata
 # from biomass_preprocessing import MergeInventoryAndCounty
 #from swis_preprocessing import LoadAndCleanSWIS #TODO
 
 
 ############################################################
-LOCAL = False
+LOCAL = True
 
 if LOCAL == True:
     print("RUNNING LOCALLY - do subset")
@@ -169,28 +169,28 @@ print("rangelands loaded") if (DEBUG == True) else ()
 # NEW RANGELAND DATA #(CAL CONSERVATION DEPT)
 # ##############################################################
 # # UPDATE 08032020 -- bring in new rangelands (and keep naming convention)
-# print("bringing in second rangeland data file") if (DEBUG == True) else ()
-# rangelands = gpd.read_file(opj(DATA_DIR, "rangelandareas/ds553.shp"))
-# rangelands = rangelands.to_crs(epsg=4326)
+print("bringing in second rangeland data file") if (DEBUG == True) else ()
+rangelands = gpd.read_file(opj(DATA_DIR, "rangelandareas/ds553.shp"))
+rangelands = rangelands.to_crs(epsg=4326)
 
-# rangelands['OBJECTID'] = rangelands.index
-
-
-# # Each planning unit falls into one of 3 groups.
-# # 0. Not included in priority areas.
-# # 1. Important for rangeland goals - selected 3-7 times of 10.
-# # 2. Critical for rangeland goals- selected 8-10 times
+rangelands['OBJECTID'] = rangelands.index
 
 
-# # convert area capacity into volume capacity
-# rangelands['area_ha'] = rangelands['Shape_area']/10000 # convert area in m2 to hectares
-# rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
-# # # estimate centroid
-# rangelands['centroid'] = rangelands['geometry'].centroid 
+# Each planning unit falls into one of 3 groups.
+# 0. Not included in priority areas.
+# 1. Important for rangeland goals - selected 3-7 times of 10.
+# 2. Critical for rangeland goals- selected 8-10 times
 
 
-# # optional - omit non-priority land:
-# rangelands = rangelands[rangelands['Priority'] != 0]
+# convert area capacity into volume capacity
+rangelands['area_ha'] = rangelands['Shape_area']/10000 # convert area in m2 to hectares
+rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
+# # estimate centroid
+rangelands['centroid'] = rangelands['geometry'].centroid 
+
+
+# optional - omit non-priority land:
+rangelands = rangelands[rangelands['Priority'] != 0]
 
 # # run full model below and see if it changes numbers dramatically, 
 # # then think through how to rename these such that it fits with croplands too. 
@@ -200,9 +200,9 @@ print("rangelands loaded") if (DEBUG == True) else ()
 # CROPLANDS
 #############################################################
  
-# # # Import croplands
-croplands = cleancropdata(opj(DATA_DIR, 
-	"raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
+# # # # Import croplands
+# croplands = cleancropdata(opj(DATA_DIR, 
+# 	"raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
 
 
 
@@ -210,13 +210,15 @@ croplands = cleancropdata(opj(DATA_DIR,
 # SUBSET!! for testing functions
 #############################################################
 if SUBSET == True: 
-	print("* create SUBSET of data for testing locally *")
-	subset_size = 10
+
+	subset_size = 20
+
+	print("* create SUBSET of data ( N=", subset_size, ") for testing locally *" )
 	
 	msw = msw[0:(2*subset_size)]
 	facilities = facilities[0:subset_size]
 	rangelands = rangelands[0:subset_size]
-	croplands = croplands[0:subset_size]
+	# croplands = croplands[0:subset_size]
 
 ############################################################
 # raise Exception("data loaded - pre optimization")

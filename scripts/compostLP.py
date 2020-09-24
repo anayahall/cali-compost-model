@@ -14,7 +14,6 @@ import shapely as shp
 import geopandas as gpd
 import scipy as sp
 
-from california_cropland_cleaning import cleancropdata
 # from biomass_preprocessing import MergeInventoryAndCounty
 #from swis_preprocessing import LoadAndCleanSWIS #TODO
 
@@ -365,7 +364,8 @@ def SolveModel(scenario_name = None,
 	prob = cp.Problem(cp.Minimize(obj), cons)
 
 	# SOLVE MODEL TO GET FINAL VALUE (which will be in terms of kg of CO2)
-	val = prob.solve(gp=False)
+	val = prob.solve(gp=False, verbose = True, 
+		parallel = False)
 	now = datetime.datetime.now()
 	
 	project_cost = val

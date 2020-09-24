@@ -23,9 +23,9 @@ import yagmail
 # Change this to activate/decativate print statements throughout
 DEBUG = True
 
-LOCAL = False
+LOCAL = True
 
-CROPLANDS = True
+CROPLANDS = False
 
 ############################################################
 if LOCAL == True:
@@ -42,6 +42,7 @@ else:
 ############################################################
 
 print(" - main - packages loaded - import compost LP script now") if (DEBUG == True) else ()
+
 from compostLP import Haversine, Distance, Fetch, SolveModel, SaveModelVars
 
 print(" - main - starting solves!!! ") if (DEBUG == True) else ()
@@ -100,7 +101,8 @@ def PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
     return
 
 
-from dataload import msw, rangelands, facilities, croplands
+from dataload import msw, rangelands, facilities
+
 ############################################################
 ### RUN SCENARIOS! #########################################
 ############################################################
@@ -117,8 +119,11 @@ if CROPLANDS == False:
 
     # RUN THE MODEL!!!
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green",
-        disposal_min = 0.5)
+        disposal_min = 0.25)
 
     # Send EMAIL w results
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
@@ -138,6 +143,9 @@ if CROPLANDS == False:
 
     # RUN THE MODEL!!!
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         disposal_min = 1.0, 
         feedstock = 'food_and_green')
 
@@ -154,6 +162,9 @@ if CROPLANDS == False:
 
     # RUN THE MODEL!!!
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green",
         disposal_min = 0.75)
 
@@ -170,6 +181,9 @@ if CROPLANDS == False:
 
     # RUN THE MODEL!!!
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green", 
         disposal_min = 0.95, 
         seq_f = -357)
@@ -186,6 +200,9 @@ if CROPLANDS == False:
 
     # RUN THE MODEL!!!
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green", 
         # disposal_min = 0.5, 
         capacity_multiplier = 2)
@@ -202,6 +219,9 @@ if CROPLANDS == False:
     print(" ** SCENARIO ** : FG_S_high aka ", run_name) if (DEBUG == True) else ()
 
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green", 
         seq_f = -357)
 
@@ -216,6 +236,9 @@ if CROPLANDS == False:
     print(" ** SCENARIO ** : food waste under 25 disposal rate aka ", run_name) if (DEBUG == True) else ()
 
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food",  
         disposal_min = 0.25)   
 
@@ -228,7 +251,10 @@ if CROPLANDS == False:
     run_name = "F_50p"
     print(" ** SCENARIO ** : food waste under 50 disposal rate aka ", run_name) if (DEBUG == True) else ()
 
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,
+    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food", 
         disposal_min = 0.5)
 
@@ -242,7 +268,11 @@ if CROPLANDS == False:
 
     print(" ** SCENARIO ** : food waste under 100 disposal rate aka ", run_name) if (DEBUG == True) else ()
 
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, feedstock = "food")
+    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
+        feedstock = "food")
 
     # Send EMAIL w results
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
@@ -254,6 +284,9 @@ if CROPLANDS == False:
     print(" ** SCENARIO ** : food waste under 20 percent recovered aka ", run_name) if (DEBUG == True) else ()
 
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food", 
         fw_reduction = 0.2)
 
@@ -267,6 +300,9 @@ if CROPLANDS == False:
     print(" **** SCENARIO: Food and green waste with 20 percent fw reduction aka ", run_name) if (DEBUG == True) else ()
 
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green", 
         fw_reduction = 0.2)
 
@@ -279,7 +315,10 @@ if CROPLANDS == False:
 
     print("next SCENARIO: food waste ignoring facillity capacity limitations aka ", run_name) if (DEBUG == True) else ()
 
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities, 
         feedstock = "food", 
         ignore_capacity = True)
 
@@ -293,6 +332,9 @@ if CROPLANDS == False:
     print("next SCENARIO: food & green waste ignoring facillity capacity limitations aka ", run_name) if (DEBUG == True) else ()
 
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green", 
         ignore_capacity = True)
 
@@ -307,6 +349,9 @@ if CROPLANDS == False:
 
     run_name = "EVs"
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         kilometres_to_emissions = 0.1)
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
 
@@ -316,6 +361,9 @@ if CROPLANDS == False:
     run_name = "landfillEF0"
 
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green", 
         disposal_min =.5,
         landfill_ef = 0 )
@@ -326,6 +374,9 @@ if CROPLANDS == False:
 
     # # print("s ******* scenario: process emis high")
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green", 
         process_emis = 16)
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
@@ -334,6 +385,9 @@ if CROPLANDS == False:
     run_name = "t_EF_high"
 
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green", 
         kilometres_to_emissions = 0.69)
 
@@ -343,6 +397,9 @@ if CROPLANDS == False:
     run_name = "spread_cost_low"
 
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,  
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green", 
         spreader_cost = 3)
 
@@ -352,6 +409,9 @@ if CROPLANDS == False:
     run_name = "double_cap"
 
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green", 
         capacity_multiplier = 2)
 
@@ -361,6 +421,9 @@ if CROPLANDS == False:
     run_name = "collection_cost_high"
 
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
         feedstock = "food_and_green", 
         c2f_trans_cost = 1.2)
 
@@ -373,6 +436,9 @@ if CROPLANDS == False:
 
 
 elif CROPLANDS == True: 
+
+    from dataload import croplands
+
     print("RUNNING SCENARIOS FOR CROPLANDS")
 
     ############################################################
