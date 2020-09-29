@@ -173,20 +173,18 @@ if CROPLANDS == False:
 
     ############################################################
 
-
     # NAME SCENARIO
-    run_name = "FG_50p_SHigh"
+    run_name = "FG_60p"
 
-    print(" ** SCENARIO ** : SEQ HIGH aka ", run_name) if (DEBUG == True) else ()
+    print(" ** SCENARIO ** : FG 60 aka ", run_name) if (DEBUG == True) else ()
 
     # RUN THE MODEL!!!
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
         msw = msw,
         landuse = rangelands,
         facilities = facilities,
-        feedstock = "food_and_green", 
-        disposal_min = 0.95, 
-        seq_f = -357)
+        feedstock = "food_and_green",
+        disposal_min = 0.6)
 
     # Send EMAIL w results
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
@@ -194,19 +192,35 @@ if CROPLANDS == False:
     ############################################################
 
     # NAME SCENARIO
-    run_name = "FG_100p_2xCapacity"
+    run_name = "FG_50p"
 
-    print(" ** SCENARIO ** : Double Capacity aka ", run_name) if (DEBUG == True) else ()
+    print(" ** SCENARIO ** : FG 50 aka ", run_name) if (DEBUG == True) else ()
 
     # RUN THE MODEL!!!
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
         msw = msw,
         landuse = rangelands,
         facilities = facilities,
-        feedstock = "food_and_green", 
-        # disposal_min = 0.5, 
-        capacity_multiplier = 2)
+        feedstock = "food_and_green",
+        disposal_min = 0.5)
 
+    # Send EMAIL w results
+    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+    ############################################################
+
+    # NAME SCENARIO
+    run_name = "FG_35p"
+
+    print(" ** SCENARIO ** : FG 35 aka ", run_name) if (DEBUG == True) else ()
+
+    # RUN THE MODEL!!!
+    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
+        feedstock = "food_and_green",
+        disposal_min = 0.35)
 
     # Send EMAIL w results
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
@@ -214,16 +228,56 @@ if CROPLANDS == False:
 
     ############################################################
 
-    run_name = "S_high"
+    # NAME SCENARIO
+    run_name = "FG_15p"
 
-    print(" ** SCENARIO ** : FG_S_high aka ", run_name) if (DEBUG == True) else ()
+    print(" ** SCENARIO ** : FG 15 aka ", run_name) if (DEBUG == True) else ()
 
+    # RUN THE MODEL!!!
     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
         msw = msw,
         landuse = rangelands,
         facilities = facilities,
-        feedstock = "food_and_green", 
-        seq_f = -357)
+        feedstock = "food_and_green",
+        disposal_min = 0.15)
+
+    # Send EMAIL w results
+    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+
+
+    ############################################################
+
+    # NAME SCENARIO
+    run_name = "FG_10p"
+
+    print(" ** SCENARIO ** : FG 10 aka ", run_name) if (DEBUG == True) else ()
+
+    # RUN THE MODEL!!!
+    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
+        feedstock = "food_and_green",
+        disposal_min = 0.10)
+
+    # Send EMAIL w results
+    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+    ############################################################
+
+    # NAME SCENARIO
+    run_name = "FG_05p"
+
+    print(" ** SCENARIO ** : FG 05 aka ", run_name) if (DEBUG == True) else ()
+
+    # RUN THE MODEL!!!
+    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
+        feedstock = "food_and_green",
+        disposal_min = 0.05)
 
     # Send EMAIL w results
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
@@ -309,128 +363,189 @@ if CROPLANDS == False:
     # Send EMAIL w results
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
 
-    ############################################################
-
-    run_name = "F_nocap"
-
-    print("next SCENARIO: food waste ignoring facillity capacity limitations aka ", run_name) if (DEBUG == True) else ()
-
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,
-        msw = msw,
-        landuse = rangelands,
-        facilities = facilities, 
-        feedstock = "food", 
-        ignore_capacity = True)
-
-    # Send EMAIL w results
-    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
-
-    ############################################################
-
-    run_name = "FG_nocap"
-
-    print("next SCENARIO: food & green waste ignoring facillity capacity limitations aka ", run_name) if (DEBUG == True) else ()
-
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
-        msw = msw,
-        landuse = rangelands,
-        facilities = facilities,
-        feedstock = "food_and_green", 
-        ignore_capacity = True)
-
-    # Send EMAIL w results
-    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
-
+    
     ############################################################
     #### SENSITIVITY RUNS ######################################
     ############################################################
 
-    print("STARTING SENSTIVITY SCENARIOS") if (DEBUG == True) else ()
+#     print("STARTING SENSTIVITY SCENARIOS") if (DEBUG == True) else ()
 
-    run_name = "EVs"
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
-        msw = msw,
-        landuse = rangelands,
-        facilities = facilities,
-        kilometres_to_emissions = 0.1)
-    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+#    ############################################################
 
-    ############################################################
+#     # NAME SCENARIO
+#     run_name = "FG_100p_2xCapacity"
 
-    # also need to do sensitivitys, for these just need the main results I think, not full df?
-    run_name = "landfillEF0"
+#     print(" ** SCENARIO ** : Double Capacity aka ", run_name) if (DEBUG == True) else ()
 
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
-        msw = msw,
-        landuse = rangelands,
-        facilities = facilities,
-        feedstock = "food_and_green", 
-        disposal_min =.5,
-        landfill_ef = 0 )
-    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
-
-    ############################################################
-    run_name = "p_EF_high"
-
-    # # print("s ******* scenario: process emis high")
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
-        msw = msw,
-        landuse = rangelands,
-        facilities = facilities,
-        feedstock = "food_and_green", 
-        process_emis = 16)
-    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
-
-    ############################################################
-    run_name = "t_EF_high"
-
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
-        msw = msw,
-        landuse = rangelands,
-        facilities = facilities,
-        feedstock = "food_and_green", 
-        kilometres_to_emissions = 0.69)
-
-    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
-
-    ############################################################
-    run_name = "spread_cost_low"
-
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,  
-        msw = msw,
-        landuse = rangelands,
-        facilities = facilities,
-        feedstock = "food_and_green", 
-        spreader_cost = 3)
-
-    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
-
-    ############################################################
-    run_name = "double_cap"
-
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
-        msw = msw,
-        landuse = rangelands,
-        facilities = facilities,
-        feedstock = "food_and_green", 
-        capacity_multiplier = 2)
-
-    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
-
-    ############################################################
-    run_name = "collection_cost_high"
-
-    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
-        msw = msw,
-        landuse = rangelands,
-        facilities = facilities,
-        feedstock = "food_and_green", 
-        c2f_trans_cost = 1.2)
+#     # RUN THE MODEL!!!
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         feedstock = "food_and_green", 
+#         # disposal_min = 0.5, 
+#         capacity_multiplier = 2)
 
 
-    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+#     # Send EMAIL w results
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
 
-############################################################
+
+#     ############################################################
+
+#     run_name = "S_high"
+
+#     print(" ** SCENARIO ** : FG_S_high aka ", run_name) if (DEBUG == True) else ()
+
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         feedstock = "food_and_green", 
+#         seq_f = -357)
+
+#     # Send EMAIL w results
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+#     ############################################################
+
+
+#     # NAME SCENARIO
+#     run_name = "FG_50p_SHigh"
+
+#     print(" ** SCENARIO ** : SEQ HIGH aka ", run_name) if (DEBUG == True) else ()
+
+#     # RUN THE MODEL!!!
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         feedstock = "food_and_green", 
+#         disposal_min = 0.95, 
+#         seq_f = -357)
+
+#     # Send EMAIL w results
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+ 
+
+
+#     run_name = "F_nocap"
+
+#     print("next SCENARIO: food waste ignoring facillity capacity limitations aka ", run_name) if (DEBUG == True) else ()
+
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities, 
+#         feedstock = "food", 
+#         ignore_capacity = True)
+
+#     # Send EMAIL w results
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+#     ############################################################
+
+#     run_name = "FG_nocap"
+
+#     print("next SCENARIO: food & green waste ignoring facillity capacity limitations aka ", run_name) if (DEBUG == True) else ()
+
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         feedstock = "food_and_green", 
+#         ignore_capacity = True)
+
+#     # Send EMAIL w results
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+#     ############################################################
+
+#     run_name = "EVs"
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         kilometres_to_emissions = 0.1)
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+#     ############################################################
+
+#     # also need to do sensitivitys, for these just need the main results I think, not full df?
+#     run_name = "landfillEF0"
+
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         feedstock = "food_and_green", 
+#         disposal_min =.5,
+#         landfill_ef = 0 )
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+#     ############################################################
+#     run_name = "p_EF_high"
+
+#     # # print("s ******* scenario: process emis high")
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         feedstock = "food_and_green", 
+#         process_emis = 16)
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+#     ############################################################
+#     run_name = "t_EF_high"
+
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         feedstock = "food_and_green", 
+#         kilometres_to_emissions = 0.69)
+
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+#     ############################################################
+#     run_name = "spread_cost_low"
+
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,  
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         feedstock = "food_and_green", 
+#         spreader_cost = 3)
+
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+#     ############################################################
+#     run_name = "double_cap"
+
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         feedstock = "food_and_green", 
+#         capacity_multiplier = 2)
+
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+#     ############################################################
+#     run_name = "collection_cost_high"
+
+#     c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name, 
+#         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         feedstock = "food_and_green", 
+#         c2f_trans_cost = 1.2)
+
+
+#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+
+# ############################################################
 
 ###################################################################
 

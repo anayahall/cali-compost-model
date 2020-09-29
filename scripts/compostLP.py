@@ -364,8 +364,7 @@ def SolveModel(scenario_name = None,
 	prob = cp.Problem(cp.Minimize(obj), cons)
 
 	# SOLVE MODEL TO GET FINAL VALUE (which will be in terms of kg of CO2)
-	val = prob.solve(gp=False, verbose = True, 
-		parallel = False)
+	val = prob.solve(gp=False, verbose = True)
 	now = datetime.datetime.now()
 	
 	project_cost = val
