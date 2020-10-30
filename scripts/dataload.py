@@ -4,6 +4,8 @@
 # when running on AWS set LOCAL = FALSE
 # this will run the full dataset
 
+#changing a thing
+
 
 import cvxpy as cp
 import numpy as np
