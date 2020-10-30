@@ -19,13 +19,13 @@ import shapely as shp
 import geopandas as gpd
 import scipy as sp
 
-# from california_cropland_cleaning import cleancropdata
+from california_cropland_cleaning import cleancropdata
 # from biomass_preprocessing import MergeInventoryAndCounty
 #from swis_preprocessing import LoadAndCleanSWIS #TODO
 
 
 ############################################################
-LOCAL = False
+LOCAL = False 
 
 if LOCAL == True:
     print("RUNNING LOCALLY - do subset")
@@ -134,7 +134,7 @@ print("MSW loaded - now adjust to get wt") if (DEBUG == True) else ()
 
 print("about to load facility data") if (DEBUG == True) else ()
 # Load facility info
-facilities = gpd.read_file(opj(DATA_DIR, "clean/clean_swis.shp"))
+facilities = gpd.read_file(opj(DATA_DIR, "swis/clean_swis.shp"))
 facilities.rename(columns={'County':'COUNTY'}, inplace=True)
 # facilities = facilities.to_crs(epsg=4326)
 
@@ -146,11 +146,11 @@ print("facility data loaded") if (DEBUG == True) else ()
 ############################################################
 # Import rangelands
 # print("about to import rangelands") if (DEBUG == True) else ()
-rangelands = gpd.read_file(opj(DATA_DIR, "raw/CA_FMMP_G/gl_bycounty/grazingland_county.shp"))
+rangelands = gpd.read_file(opj(DATA_DIR, "rangelands/FMMP/grazingland_county.shp"))
 rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
 
 # Fix county names in RANGELANDS! 
-countyIDs = pd.read_csv(opj(DATA_DIR, "interim/CA_FIPS_wcode.csv"), 
+countyIDs = pd.read_csv(opj(DATA_DIR, "counties/CA_FIPS_wcode.csv"), 
 	names = ['FIPS', 'COUNTY', 'State', 'county_nam'])
 countyIDs = countyIDs[['COUNTY', 'county_nam']]
 rangelands = pd.merge(rangelands, countyIDs, on = 'county_nam')
@@ -170,7 +170,7 @@ print("rangelands loaded") if (DEBUG == True) else ()
 # ##############################################################
 # # UPDATE 08032020 -- bring in new rangelands (and keep naming convention)
 print("bringing in second rangeland data file") if (DEBUG == True) else ()
-rangelands = gpd.read_file(opj(DATA_DIR, "rangelandareas/ds553.shp"))
+rangelands = gpd.read_file(opj(DATA_DIR, "rangelands/DOC/ds553.shp"))
 rangelands = rangelands.to_crs(epsg=4326)
 
 rangelands['OBJECTID'] = rangelands.index
@@ -201,8 +201,8 @@ rangelands = rangelands[rangelands['Priority'] != 0]
 #############################################################
  
 # # # # Import croplands
-# croplands = cleancropdata(opj(DATA_DIR, 
-# 	"raw/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
+croplands = cleancropdata(opj(DATA_DIR, 
+	"crops/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"))
 
 
 
@@ -218,7 +218,7 @@ if SUBSET == True:
 	msw = msw[0:(2*subset_size)]
 	facilities = facilities[0:subset_size]
 	rangelands = rangelands[0:subset_size]
-	# croplands = croplands[0:subset_size]
+	croplands = croplands[0:subset_size]
 
 ############################################################
 # raise Exception("data loaded - pre optimization")

@@ -38,7 +38,7 @@ if LOCAL == True:
 else: 
     print("RUNNING ON AWS - yes email, many runs")
     SEND_EMAIL = True
-    TEST_RUN = False
+    TEST_RUN = True
 ############################################################
 
 print(" - main - packages loaded - import compost LP script now") if (DEBUG == True) else ()
@@ -113,7 +113,7 @@ if CROPLANDS == False:
     print("RUNNING SCENARIOS FOR RANGELANDS")
 
     # NAME SCENARIO
-    run_name = 'FG_50p'
+    run_name = 'FG_25p'
 
     print(" ** SCENARIO ** : HALF DISPOSAL aka ", run_name) if (DEBUG == True) else ()
 
