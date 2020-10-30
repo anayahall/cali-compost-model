@@ -37,7 +37,7 @@ if LOCAL == True:
     # also change ON DATALOAD SCRIPT
 else: 
     print("RUNNING ON AWS - yes email, many runs")
-    SEND_EMAIL = True
+    SEND_EMAIL = False
     TEST_RUN = True
 ############################################################
 
