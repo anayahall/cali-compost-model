@@ -7,6 +7,7 @@ results/
 plots/
 maps/
 eqns/
+refs/
 siting_model/
 .ipynb_checkpoints/
 scripts/.DS_Store
@@ -19,3 +20,4 @@ app.py
 requirements-old.txt
 grapevie.Rproj
 dockerlogin
+

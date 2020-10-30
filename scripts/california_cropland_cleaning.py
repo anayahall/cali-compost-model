@@ -6,15 +6,17 @@ from os.path import join as opj
 import geopandas as gpd
 
 
-# Set data directory -- CHANGE THIS FOR YOUR LOCAL DEVICE
-# DATA_DIR = "/Users/anayahall/projects/cali-compost-model/data" 
+DATA_DIR = "data"
+
+cropdata_shapefile = "crops/Crop__Mapping_2014-shp/Crop__Mapping_2014.shp"
 
 ############################################################
 # CROPLANDS
 #############################################################
 def cleancropdata(cropdata):
 	# Read in cropland data
-	cropmap = gpd.read_file(cropdata) 
+	cropmap = gpd.read_file(opj(DATA_DIR,
+					  cropdata_shapefile))
 
 	# Exclude non-crop uses
 	non_crops = ["Managed Wetland", "Urban", "Idle", "Mixed Pasture"]	#Anaya's original categories to exclude
@@ -35,10 +37,27 @@ def cleancropdata(cropdata):
 	# croplands = cropmap[cropmap['DWR_Standa'].isin(highvaluecrops)==True]
 	croplands = cropmap[cropmap['Crop2014'].isin(highvaluecrops)==True]
 
-	## Save as shapefile
-	# out = r"clean/CropMap2014_clean.shp"
-	# croplands.to_file(driver='ESRI Shapefile', filename=opj(DATA_DIR, out))
+	croplands['centroid'] = croplands['geometry'].centroid 
+	# get cropland capacity: rated as 9t/ha for treecrops
+	# 0.58 tons per cubic meter
+	# 9 tons per hectare
+	# m3 = acres * (ha/acres) * (t/ha) * (m3/t)
+	croplands['capacity_m3'] = croplands['Acres'] * (0.404686) * (9) * (1/0.58)
+	croplands.reset_index(inplace = True, drop = True)
 
+		## Save as shapefile
+	# out = r"clean/CropMap2014_clean.shp"
+	# croplands.to_file(driver='ESRI Shapefile', filename="treecrops.shp")
+
+
+	# gdf = croplands
 	return croplands
 # done! 
+
+# croplands_dissolved = croplands.dissolve(by = 'County')
+
+
+# x = gpd.GeoDataFrame(croplands.groupby('County')).dissolve('Crop2014')
+
+
 
