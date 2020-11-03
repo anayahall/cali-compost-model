@@ -138,7 +138,7 @@ def SolveModel(scenario_name = None,
 	
 	# Scenario settings
 	disposal_min = 0.00001,   # percent of waste to include in run (cannot be ZERO - will break solver #TODO)
-	emissions_constraint = None,
+	emissions_constraint = 0.3,
 	fw_reduction = 0,    # food waste reduced/recovered pre-disposal #FLAG is this accounted for ELSEWHERE?
 	ignore_capacity = False, # toggle to ignore facility capacity info
 	capacity_multiplier = 1, # can inflate capacity 
@@ -297,7 +297,7 @@ def SolveModel(scenario_name = None,
 
 
 	# Set disposal cap for use in constraints
-	msw['disposal_minimum'] = (disposal_min) * msw['disposal']
+# 	msw['disposal_minimum'] = (disposal_min) * msw['disposal']
 
 	#Constraints
 	cons = []
@@ -314,7 +314,7 @@ def SolveModel(scenario_name = None,
 			temp += x['quantity']
 			cons += [0 <= x['quantity']]              #Quantity must be >=0
 		cons += [temp <= Fetch(msw, 'muni_ID', muni, 'disposal')]   #Sum for each county must be <= county production
-		cons += [temp >= Fetch(msw, 'muni_ID', muni, 'disposal_minimum')]   #Sum for each county must be <= county production
+# 		cons += [temp >= Fetch(msw, 'muni_ID', muni, 'disposal_minimum')]   #Sum for each county must be <= county production
 
 	facilities['facility_capacity'] = capacity_multiplier * facilities['cap_m3']
 
@@ -357,6 +357,7 @@ def SolveModel(scenario_name = None,
 			temp_out += x['quantity']	# sum of output from facilty to land
 		cons += [temp_out == waste_to_compost*temp_in]
 
+   #START CALCULATING EMISSIONS (FOR CONSTRAINT)     
 	total_emis = 0
 
 	# EMISIONS FROM C TO F (at at Facility)
@@ -409,7 +410,7 @@ def SolveModel(scenario_name = None,
 	CO2mit = -total_emis/(10**9)
     
 	# if emissions_constraint != None:
-	cons += [CO2mit >= 0]
+	cons += [CO2mit >= emissions_constraint]
 
 
 	############################################################
