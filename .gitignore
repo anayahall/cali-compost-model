@@ -14,6 +14,7 @@ scripts/.DS_Store
 scripts/old/
 scripts/notebooks
 scripts/dockerlogin
+scripts/__pycache__/
 .DS_Store
 NOTES
 app.py
