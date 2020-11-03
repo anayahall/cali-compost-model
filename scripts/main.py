@@ -31,8 +31,6 @@ SEND_EMAIL = False
 # run on crops? 
 CROPLANDS = False
 
-
-
 ############################################################
 
 
@@ -49,15 +47,15 @@ print(" - main - starting solves!!! ") if (DEBUG == True) else ()
 def PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost):
     # SAVE RESULTS C2F
     # with open('results/latest_c2f.p', 'wb') as f:
-    with open('c2f_'+str(run_name)+'.p', 'wb') as f:
+    with open('out/c2f_'+str(run_name)+'.p', 'wb') as f:
         pickle.dump(c2f_val, f)
 
     # SAVE RESULTS F2R
-    with open('f2r_'+str(run_name)+'.p', 'wb') as f:
+    with open('out/f2r_'+str(run_name)+'.p', 'wb') as f:
         pickle.dump(f2r_val, f)
 
     # SAVE LAND APPLICATION DICT
-    with open('landapp_'+str(run_name)+'.p', 'wb') as f:
+    with open('out/landapp_'+str(run_name)+'.p', 'wb') as f:
         pickle.dump(land_app, f)
 
     # EMAIL RESULTS
@@ -119,8 +117,8 @@ if CROPLANDS == False:
         msw = msw,
         landuse = rangelands,
         facilities = facilities,
-        feedstock = "food_and_green")
-        #disposal_min = 0.25)
+        feedstock = "food_and_green",
+        disposal_min = 0.25)
 
     # Send EMAIL w results
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)

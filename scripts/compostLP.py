@@ -137,7 +137,7 @@ def SolveModel(scenario_name = None,
 	facilities = facilities,
 	
 	# Scenario settings
-	# disposal_min = 0.00001,   # percent of waste to include in run (cannot be ZERO - will break solver #TODO)
+	disposal_min = 0.00001,   # percent of waste to include in run (cannot be ZERO - will break solver #TODO)
 	emissions_constraint = None,
 	fw_reduction = 0,    # food waste reduced/recovered pre-disposal #FLAG is this accounted for ELSEWHERE?
 	ignore_capacity = False, # toggle to ignore facility capacity info
@@ -297,7 +297,7 @@ def SolveModel(scenario_name = None,
 
 
 	# Set disposal cap for use in constraints
-	# msw['disposal_minimum'] = (disposal_min) * msw['disposal']
+	msw['disposal_minimum'] = (disposal_min) * msw['disposal']
 
 	#Constraints
 	cons = []
@@ -314,7 +314,7 @@ def SolveModel(scenario_name = None,
 			temp += x['quantity']
 			cons += [0 <= x['quantity']]              #Quantity must be >=0
 		cons += [temp <= Fetch(msw, 'muni_ID', muni, 'disposal')]   #Sum for each county must be <= county production
-		# cons += [temp >= Fetch(msw, 'muni_ID', muni, 'disposal_minimum')]   #Sum for each county must be <= county production
+		cons += [temp >= Fetch(msw, 'muni_ID', muni, 'disposal_minimum')]   #Sum for each county must be <= county production
 
 	facilities['facility_capacity'] = capacity_multiplier * facilities['cap_m3']
 
@@ -357,6 +357,59 @@ def SolveModel(scenario_name = None,
 			temp_out += x['quantity']	# sum of output from facilty to land
 		cons += [temp_out == waste_to_compost*temp_in]
 
+	total_emis = 0
+
+	# EMISIONS FROM C TO F (at at Facility)
+	count = 0 # for keeping track of the municipality count
+	# emissions due to waste remaining in muni
+	for muni in msw['muni_ID']:
+		count += 1
+		print("muni ID: ", muni, " ## ", count,  "-- (AVOIDED) LANDFILL EMISSIONS") if (DEBUG == True) else ()
+		county_disposal = Fetch(msw, 'muni_ID', muni, 'disposal')
+		temp = 0
+		for facility in facilities['SwisNo']:
+			print("c2f - facility: ", facility) if (DEBUG == True) else ()
+			#grab quantity and sum for each county
+			x    = c2f[muni][facility]
+# 			if x['quantity'].value is not None:
+# 				v = x['quantity'].value  
+			if x['quantity'] is not None:
+				v = x['quantity']  
+			else:
+				v = 0.0
+			temp += v
+			# emissions due to transport of waste from county to facility 
+			total_emis += v * x['trans_emis']
+			# emissions due to processing compost at facility
+			total_emis += v * process_emis
+	#    temp = sum([c2f[muni][facility]['quantity'] for facilities in facilities['SwisNo']]) #Does the same thing
+		total_emis += landfill_ef*(-temp) #AVOIDED Landfill emissions
+		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
+
+	# EMISSIONS FROM F TO R (and at Rangeland)
+	for facility in facilities['SwisNo']:
+		print("SW facility: ", facility, "--to LAND") if (DEBUG == True) else ()
+		for land in landuse['OBJECTID']:
+			print('f2r - land #: ', land) if (DEBUG == True) else ()
+			x = f2r[facility][land]
+# 			if x['quantity'].value is not None:
+# 				applied_amount = x['quantity'].value  
+			if x['quantity'] is not None:
+				applied_amount = x['quantity']  
+			else:
+				applied_amount = 0.0 
+			# emissions due to transport of compost from facility to landuse
+			total_emis += x['trans_emis']* applied_amount
+			# emissions due to application of compost by manure spreader
+			total_emis += spreader_ef * applied_amount
+			# sequestration of applied compost
+			total_emis += seq_f * applied_amount
+            
+    	# translate to MMT
+	CO2mit = -total_emis/(10**9)
+    
+	# if emissions_constraint != None:
+	cons += [CO2mit >= 0]
 
 
 	############################################################
@@ -419,6 +472,9 @@ def SolveModel(scenario_name = None,
 ####### OLD OBJECTIVE FUNCTION --- swap to calculate AFTER SOLVING: 
 #use c2f['muni']['facility']['quantity'].value
 # or f2r['facility']['land']['quantity'].value
+
+# this is replicated from above, but now uses the solved values to calculate
+# might not be neccessary to recaclutate once constraint added, but doing this one step at a time!
 	total_emis = 0
 
 	# EMISIONS FROM C TO F (at at Facility)
@@ -435,8 +491,8 @@ def SolveModel(scenario_name = None,
 			x    = c2f[muni][facility]
 			if x['quantity'].value is not None:
 				v = x['quantity'].value  
-			# if x['quantity'] is not None:
-			# 	v = x['quantity']  
+# 			if x['quantity'] is not None:
+# 				v = x['quantity']  
 			else:
 				v = 0.0
 			temp += v
@@ -456,8 +512,8 @@ def SolveModel(scenario_name = None,
 			x = f2r[facility][land]
 			if x['quantity'].value is not None:
 				applied_amount = x['quantity'].value  
-			# if x['quantity'] is not None:
-			# 	applied_amount = x['quantity']  
+# 			if x['quantity'] is not None:
+# 				applied_amount = x['quantity']  
 			else:
 				applied_amount = 0.0 
 			# emissions due to transport of compost from facility to landuse
@@ -466,19 +522,16 @@ def SolveModel(scenario_name = None,
 			total_emis += spreader_ef * applied_amount
 			# sequestration of applied compost
 			total_emis += seq_f * applied_amount
-	# if emissions_constraint != None:
-	# 	cons += [total_emis <= emissions_constraint]
+            
+    	# translate to MMT
+	CO2mit = -total_emis/(10**9)
+
 
 #########################################
 
 	cost_millions = (val/(10**6))    
 	print("TOTAL COST (Millions $) : ", cost_millions)
 	print("TOTAL EMISSIONS (kg CO2e) : ", total_emis)
-
-
-	# translate to MMT
-	CO2mit = -total_emis/(10**9)
-
 	print("*********************************************")
 	print("CO2 Mitigated (MMt CO2eq) = {0}".format(CO2mit))
 
