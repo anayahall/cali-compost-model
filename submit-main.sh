@@ -8,4 +8,4 @@
 #run the application:
 module load python
 source activate myenv
-srun -n 96 -c 2 python scripts/main.py
+srun python scripts/main.py

@@ -102,7 +102,24 @@ from dataload import msw, rangelands, facilities
 ### RUN SCENARIOS! #########################################
 ############################################################
 
+C_levels = np.arange(0.1, 3.2, 0.1)
 
+for i in C_levels:
+    run_name = str("run_"+str(i))
+    # RUN THE MODEL!!!
+    c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost = SolveModel(scenario_name = run_name,
+        emission_constraint = i,                                                                           
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
+        feedstock = "food_and_green")
+
+    # Send EMAIL w results
+    PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+    print("Run #", i, "done!!")
+
+
+raise Exception("baseline rangeland run")
 
 if CROPLANDS == False:
     print("RUNNING SCENARIOS FOR RANGELANDS")
@@ -117,8 +134,8 @@ if CROPLANDS == False:
         msw = msw,
         landuse = rangelands,
         facilities = facilities,
-        feedstock = "food_and_green",
-        disposal_min = 0.25)
+        feedstock = "food_and_green")
+    ##   disposal_min = 0.25)
 
     # Send EMAIL w results
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
