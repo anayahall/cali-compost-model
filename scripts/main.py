@@ -23,22 +23,19 @@ import yagmail
 # Change this to activate/decativate print statements throughout
 DEBUG = True
 
-LOCAL = False
+# single run? yes for testing and locallY!
+TEST_RUN = True
 
+# send email (only needed for AWS)
+SEND_EMAIL = False
+# run on crops? 
 CROPLANDS = False
 
+
+
 ############################################################
-if LOCAL == True:
-    print("RUNNING LOCALLY - no email, just one one")
-    # Send email results! 
-    SEND_EMAIL = False
-    #single run?
-    TEST_RUN = True
-    # also change ON DATALOAD SCRIPT
-else: 
-    print("RUNNING ON AWS - yes email, many runs")
-    SEND_EMAIL = False
-    TEST_RUN = True
+
+
 ############################################################
 
 print(" - main - packages loaded - import compost LP script now") if (DEBUG == True) else ()
@@ -122,8 +119,8 @@ if CROPLANDS == False:
         msw = msw,
         landuse = rangelands,
         facilities = facilities,
-        feedstock = "food_and_green",
-        disposal_min = 0.25)
+        feedstock = "food_and_green")
+        #disposal_min = 0.25)
 
     # Send EMAIL w results
     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)

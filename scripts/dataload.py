@@ -27,20 +27,11 @@ from california_cropland_cleaning import cleancropdata
 
 
 ############################################################
-LOCAL = False 
+# run on full data set or small sample (for testing!!)
+SUBSET = False 
 
-if LOCAL == True:
-    print("RUNNING LOCALLY - do subset")
-    # Change this to subset the data easily for running locally
-    SUBSET = True
-else:
-    print("RUNNING ON AWS - full dataset")
-    SUBSET = False
-
-
-# other toggles:
 # Change this to activate/decativate print statements throughout
-DEBUG = True
+DEBUG = False
 
 # Change this for counties vs census tracts (true is muni, false is counties)
 CENSUSTRACT = False

@@ -19,7 +19,7 @@ import scipy as sp
 
 ############################################################
 # Change this to activate/decativate print statements throughout
-DEBUG = True
+DEBUG = False
 ############################################################
 
 # set data directories (relative)
@@ -137,7 +137,8 @@ def SolveModel(scenario_name = None,
 	facilities = facilities,
 	
 	# Scenario settings
-	disposal_min = 0.00001,   # percent of waste to include in run (cannot be ZERO - will break solver #TODO)
+	# disposal_min = 0.00001,   # percent of waste to include in run (cannot be ZERO - will break solver #TODO)
+	emissions_constraint = None,
 	fw_reduction = 0,    # food waste reduced/recovered pre-disposal #FLAG is this accounted for ELSEWHERE?
 	ignore_capacity = False, # toggle to ignore facility capacity info
 	capacity_multiplier = 1, # can inflate capacity 
@@ -169,6 +170,7 @@ def SolveModel(scenario_name = None,
 	:param facilities SWIS data source
 
 	:param disposal_min percent of waste to include in run (default is 1)
+	:param emissions_constraint
 	:param fw_reduction food waste reduced/recovered pre-disposal (default is 0) 
 	:param ignore_capacity toggle to ignore facility capacity info (default is FALSE)
 	:param capacity_multiplier scalar multiplier by which to inflate capacity (default is 1)
@@ -295,7 +297,7 @@ def SolveModel(scenario_name = None,
 
 
 	# Set disposal cap for use in constraints
-	msw['disposal_minimum'] = (disposal_min) * msw['disposal']
+	# msw['disposal_minimum'] = (disposal_min) * msw['disposal']
 
 	#Constraints
 	cons = []
@@ -312,7 +314,7 @@ def SolveModel(scenario_name = None,
 			temp += x['quantity']
 			cons += [0 <= x['quantity']]              #Quantity must be >=0
 		cons += [temp <= Fetch(msw, 'muni_ID', muni, 'disposal')]   #Sum for each county must be <= county production
-		cons += [temp >= Fetch(msw, 'muni_ID', muni, 'disposal_minimum')]   #Sum for each county must be <= county production
+		# cons += [temp >= Fetch(msw, 'muni_ID', muni, 'disposal_minimum')]   #Sum for each county must be <= county production
 
 	facilities['facility_capacity'] = capacity_multiplier * facilities['cap_m3']
 
@@ -354,6 +356,8 @@ def SolveModel(scenario_name = None,
 			x = f2r[facility][land]
 			temp_out += x['quantity']	# sum of output from facilty to land
 		cons += [temp_out == waste_to_compost*temp_in]
+
+
 
 	############################################################
 	tzero = datetime.datetime.now()
@@ -415,7 +419,6 @@ def SolveModel(scenario_name = None,
 ####### OLD OBJECTIVE FUNCTION --- swap to calculate AFTER SOLVING: 
 #use c2f['muni']['facility']['quantity'].value
 # or f2r['facility']['land']['quantity'].value
-
 	total_emis = 0
 
 	# EMISIONS FROM C TO F (at at Facility)
@@ -432,6 +435,8 @@ def SolveModel(scenario_name = None,
 			x    = c2f[muni][facility]
 			if x['quantity'].value is not None:
 				v = x['quantity'].value  
+			# if x['quantity'] is not None:
+			# 	v = x['quantity']  
 			else:
 				v = 0.0
 			temp += v
@@ -443,8 +448,6 @@ def SolveModel(scenario_name = None,
 		total_emis += landfill_ef*(-temp) #AVOIDED Landfill emissions
 		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
 
-	print("OBJ SIZE (C2f): ", sys.getsizeof(obj)) if (DEBUG == True) else ()
-
 	# EMISSIONS FROM F TO R (and at Rangeland)
 	for facility in facilities['SwisNo']:
 		print("SW facility: ", facility, "--to LAND") if (DEBUG == True) else ()
@@ -453,6 +456,8 @@ def SolveModel(scenario_name = None,
 			x = f2r[facility][land]
 			if x['quantity'].value is not None:
 				applied_amount = x['quantity'].value  
+			# if x['quantity'] is not None:
+			# 	applied_amount = x['quantity']  
 			else:
 				applied_amount = 0.0 
 			# emissions due to transport of compost from facility to landuse
@@ -461,8 +466,8 @@ def SolveModel(scenario_name = None,
 			total_emis += spreader_ef * applied_amount
 			# sequestration of applied compost
 			total_emis += seq_f * applied_amount
-
-
+	# if emissions_constraint != None:
+	# 	cons += [total_emis <= emissions_constraint]
 
 #########################################
 
