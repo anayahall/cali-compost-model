@@ -102,7 +102,7 @@ from dataload import msw, rangelands, facilities
 ### RUN SCENARIOS! #########################################
 ############################################################
 
-C_levels = np.arange(0.1, 3.2, 0.5)
+C_levels = np.arange(0.1, 3.1, 0.5)
 
 for i in C_levels:
     run_name = str("run_"+str(i))
@@ -120,6 +120,7 @@ for i in C_levels:
 
 
 raise Exception("baseline rangeland run")
+
 
 if CROPLANDS == False:
     print("RUNNING SCENARIOS FOR RANGELANDS")

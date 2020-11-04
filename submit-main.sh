@@ -5,7 +5,7 @@
 #SBATCH -J compost
 #SBATCH --mail-user=anayahall@berkeley.edu
 #SBATCH --mail-type=ALL
-#SBATCH -t 00:30:00
+#SBATCH -t 00:60:00
 
 #OpenMP settings:
 export OMP_NUM_THREADS=64
