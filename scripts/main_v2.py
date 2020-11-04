@@ -2,6 +2,8 @@
 # edited for running on slurm where I mostly care about getting the abatement curve set
 # will do one run at midlevel afterwards to get the flows!
 
+############################################################
+# Load packages
 import cvxpy as cp
 import numpy as np
 import os
@@ -17,6 +19,7 @@ import yagmail
 
 
 ############################################################
+# Settings
 # Change this to activate/decativate print statements throughout
 DEBUG = True
 
@@ -24,7 +27,7 @@ DEBUG = True
 CROPLANDS = False
 
 ############################################################
-
+# Load necessary other scripts (CompostLP and dataload)
 print(" - main - packages loaded - import compost LP script now") if (DEBUG == True) else ()
 
 from compostLP import Haversine, Distance, Fetch, SolveModel, SaveModelVars
@@ -38,6 +41,7 @@ from dataload import msw, rangelands, facilities
 ### RUN SCENARIOS! #########################################
 ############################################################
 
+# this loop is just to build out the abatement cost curve
 C_levels = np.arange(0.1, 3.1, 0.5)
 
 resultsarray = np.zeros([len(C_levels),2])
@@ -53,9 +57,9 @@ resultsarray = np.zeros([len(C_levels),2])
 #count
 c = 0
 for i in C_levels:
-    print("Count: ", c)
+    print("Count: ", c) if (DEBUG == True) else ()
     run_name = str("run_"+str(i))
-    print("RUNNING: ", run_name)
+    print("RUNNING: ", run_name) if (DEBUG == True) else ()
     # RUN THE MODEL!!!
     c2f_val, f2r_val, land_app, cost_millions, CO2mit, abatement_cost = SolveModel(scenario_name = run_name,
         emissions_constraint = i,                                                                         msw = msw,
@@ -68,9 +72,12 @@ for i in C_levels:
     resultsarray[c,0] = CO2mit
     resultsarray[c,1] = abatement_cost
     c += 1
-    print("Run #", i, "done!!")
+    print("Run #", i, "done!!") if (DEBUG == True) else ()
+
+############################################################
     
     
+# can also rerun to grab flows!
 #     # SAVE RESULTS C2F
 #     # with open('results/latest_c2f.p', 'wb') as f:
 #     with open('out/c2f_'+str(run_name)+'.p', 'wb') as f:
@@ -83,5 +90,7 @@ for i in C_levels:
 #     # SAVE LAND APPLICATION DICT
 #     with open('out/landapp_'+str(run_name)+'.p', 'wb') as f:
 #         pickle.dump(land_app, f)
+############################################################
 
-sys.exit()
+print("EXITING PROGRAM") if (DEBUG == True) else ()
+exit()

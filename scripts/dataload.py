@@ -28,10 +28,10 @@ from california_cropland_cleaning import cleancropdata
 
 ############################################################
 # run on full data set or small sample (for testing!!)
-SUBSET = True 
+SUBSET = False 
 
 # Change this to activate/decativate print statements throughout
-DEBUG = False
+DEBUG = True
 
 # Change this for counties vs census tracts (true is muni, false is counties)
 CENSUSTRACT = False
