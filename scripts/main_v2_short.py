@@ -42,41 +42,41 @@ from dataload import msw, rangelands, facilities
 ############################################################
 
 # this loop is just to build out the abatement cost curve
-C_levels = np.arange(0.1, 3.1, 1)
+# C_levels = np.arange(0.1, 3.1, 1)
 
-resultsarray = np.zeros([len(C_levels),2])
-# testarray = np.random.randint(10, size=(4, 2))
+# resultsarray = np.zeros([len(C_levels),2])
+# # testarray = np.random.randint(10, size=(4, 2))
 
-# for i in range(4):
-# 	x = np.random.randint(100,size=1)	 
-# 	f = np.random.randint(100,size=1)
-# 	print("C: ", x, "& F: ", f)
-# 	resultsarray[i,0] = x
-# 	resultsarray[i,1] = f
+# # for i in range(4):
+# # 	x = np.random.randint(100,size=1)	 
+# # 	f = np.random.randint(100,size=1)
+# # 	print("C: ", x, "& F: ", f)
+# # 	resultsarray[i,0] = x
+# # 	resultsarray[i,1] = f
 
-#count
-c = 0
-for i in C_levels:
-    print("Count: ", c) if (DEBUG == True) else ()
-    run_name = str("run_"+str(i))
-    print("RUNNING: ", run_name) if (DEBUG == True) else ()
-    # RUN THE MODEL!!!
-    c2f_val, f2r_val, land_app, cost_millions, CO2mit, abatement_cost = SolveModel(scenario_name = run_name,
-        emissions_constraint = i,                                                                         msw = msw,
-        landuse = rangelands,
-        facilities = facilities,
-        feedstock = "food_and_green")
+# #count
+# c = 0
+# for i in C_levels:
+#     print("Count: ", c) if (DEBUG == True) else ()
+#     run_name = str("run_"+str(i))
+#     print("RUNNING: ", run_name) if (DEBUG == True) else ()
+#     # RUN THE MODEL!!!
+#     c2f_val, f2r_val, land_app, cost_millions, CO2mit, abatement_cost = SolveModel(scenario_name = run_name,
+#         emissions_constraint = i,                                                                         msw = msw,
+#         landuse = rangelands,
+#         facilities = facilities,
+#         feedstock = "food_and_green")
 
-    # Send EMAIL w results
-#     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
-    resultsarray[c,0] = CO2mit
-    resultsarray[c,1] = abatement_cost
-    c += 1
-    print("Run #", i, "done!!") if (DEBUG == True) else ()
+#     # Send EMAIL w results
+# #     PackageEmail(c2f_val, f2r_val, land_app, cost_millions, val, abatement_cost)
+#     resultsarray[c,0] = CO2mit
+#     resultsarray[c,1] = abatement_cost
+#     c += 1
+#     print("Run #", i, "done!!") if (DEBUG == True) else ()
 
     
-with open('out/resultsarray_2.p', 'wb') as f:
-    pickle.dump(resultsarray, f)    
+# with open('out/resultsarray_2.p', 'wb') as f:
+#     pickle.dump(resultsarray, f)    
 ############################################################
 # now run at midlevel and save flows
 run_name = 'ec1'

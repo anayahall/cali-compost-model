@@ -28,7 +28,7 @@ from california_cropland_cleaning import cleancropdata
 
 ############################################################
 # run on full data set or small sample (for testing!!)
-SUBSET = False 
+SUBSET = True 
 
 # Change this to activate/decativate print statements throughout
 DEBUG = True
