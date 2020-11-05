@@ -74,22 +74,32 @@ for i in C_levels:
     c += 1
     print("Run #", i, "done!!") if (DEBUG == True) else ()
 
+    
+with open('out/resultsarray_2.p', 'wb') as f:
+    pickle.dump(resultsarray, f)    
 ############################################################
-    
-    
-# can also rerun to grab flows!
+# now run at midlevel and save flows
+run_name = 'ec1'
+
+c2f_val, f2r_val, land_app, cost_millions, CO2mit, abatement_cost = SolveModel(scenario_name = run_name,
+        emissions_constraint = 1,
+        msw = msw,
+        landuse = rangelands,
+        facilities = facilities,
+        feedstock = "food_and_green")
+
 #     # SAVE RESULTS C2F
-#     # with open('results/latest_c2f.p', 'wb') as f:
-#     with open('out/c2f_'+str(run_name)+'.p', 'wb') as f:
-#         pickle.dump(c2f_val, f)
+# with open('results/latest_c2f.p', 'wb') as f:
+with open('out/c2f_ec1_x.p', 'wb') as f:
+    pickle.dump(c2f_val, f)
 
-#     # SAVE RESULTS F2R
-#     with open('out/f2r_'+str(run_name)+'.p', 'wb') as f:
-#         pickle.dump(f2r_val, f)
+# SAVE RESULTS F2R
+with open('out/f2r_ec1_x.p', 'wb') as f:
+    pickle.dump(f2r_val, f)
 
-#     # SAVE LAND APPLICATION DICT
-#     with open('out/landapp_'+str(run_name)+'.p', 'wb') as f:
-#         pickle.dump(land_app, f)
+# SAVE LAND APPLICATION DICT
+with open('out/landapp_ec1_x.p', 'wb') as f:
+    pickle.dump(land_app, f)
 ############################################################
 
 print("EXITING PROGRAM") if (DEBUG == True) else ()
