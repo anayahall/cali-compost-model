@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -N 1
-#SBATCH -C knl
+#SBATCH -C haswell
 #SBATCH -q regular
 #SBATCH -J compost
 #SBATCH --mail-user=anayahall@berkeley.edu
@@ -8,7 +8,7 @@
 #SBATCH -t 04:00:00
 
 #OpenMP settings:
-export OMP_NUM_THREADS=64
+export OMP_NUM_THREADS=272
 export OMP_PLACES=threads
 export OMP_PROC_BIND=spread
 
