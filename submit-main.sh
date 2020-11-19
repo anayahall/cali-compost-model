@@ -5,7 +5,7 @@
 #SBATCH -J compost
 #SBATCH --mail-user=anayahall@berkeley.edu
 #SBATCH --mail-type=ALL
-#SBATCH -t 04:00:00
+#SBATCH -t 08:00:00
 
 #OpenMP settings:
 export OMP_NUM_THREADS=272
@@ -16,4 +16,4 @@ export OMP_PROC_BIND=spread
 #run the application:
 module load python
 source activate myenv
-srun -n 1 -c 272 --cpu_bind=cores python scripts/main_v2.py
+srun -n 1 -c 64 --cpu_bind=cores python scripts/main_v2.py
