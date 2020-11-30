@@ -46,7 +46,7 @@ C_levels = np.arange(0.1, 3.1, 1)
 
 resultsarray = np.zeros([len(C_levels),2])
 
-count
+
 c = 0
 for i in C_levels:
     print("Count: ", c) if (DEBUG == True) else ()
