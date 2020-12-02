@@ -42,7 +42,7 @@ from dataload import msw, rangelands, facilities
 ############################################################
 
 # this loop is just to build out the abatement cost curve
-C_levels = np.arange(0.1, 3.1, 1)
+C_levels = np.arange(0.1, 3.1, 0.1)
 
 resultsarray = np.zeros([len(C_levels),2])
 
@@ -69,7 +69,9 @@ for i in C_levels:
 
     
 with open('out/resultsarray_2.p', 'wb') as f:
-    pickle.dump(resultsarray, f)    
+    pickle.dump(resultsarray, f)
+
+print(resultsarray)
 ############################################################
 # now run at midlevel and save flows
 # print("---about to run at midlevel ish---")
