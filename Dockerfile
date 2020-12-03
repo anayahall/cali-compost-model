@@ -29,6 +29,6 @@ RUN pip install -r requirements.txt
 
 
 # Run syncd in production mode
-CMD ["python", "main.py"]
+CMD ["python", "main_v2.py"]
 
 # CMD tail -f /dev/null
