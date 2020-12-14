@@ -204,7 +204,7 @@ croplands = cleancropdata(opj(DATA_DIR,
 #############################################################
 if SUBSET == True: 
 
-	subset_size = 10
+	subset_size = 25
 
 	print("* create SUBSET of data ( N=", subset_size, ") for testing locally *" )
 	

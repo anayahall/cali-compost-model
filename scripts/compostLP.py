@@ -157,6 +157,8 @@ def SolveModel(scenario_name = None,
 	f2r_trans_cost = .206, #$/m3-km # transit costs
 	spreader_cost = 5.8, #$/m3 # cost to spread
 	detour_factor = 1.4, #chosen based on literature - multiplier on haversine distance
+
+	a = 1 # minimizing on cost when a is 1, and on ghg when a is 0
 		):
 	
 	"""
@@ -280,6 +282,8 @@ def SolveModel(scenario_name = None,
 			# print("c2f distance cost for facility: ", facility)
 			x    = c2f[muni][facility]
 			obj += x['quantity']*x['trans_cost']
+			# obj += a * x['quantity']*x['trans_cost']
+
 		# cost_dict[muni]['cost'] = int(round(ship_cost))
 
 	for facility in facilities['SwisNo']:
@@ -288,8 +292,11 @@ def SolveModel(scenario_name = None,
 			x = f2r[facility][land]
 			# project_cost due to transport of compost from facility to landuse
 			obj += x['quantity'] * x['trans_cost']
+			# obj += a * x['quantity'] * x['trans_cost']
+
 			# project_cost due to application of compost by manure spreader
 			obj += x['quantity'] * spreader_cost
+			# obj += a * x['quantity'] * spreader_cost
 
 	print("OBJ (C2f + F2R) SIZE: ", sys.getsizeof(obj)) if (DEBUG == True) else ()
 
@@ -381,10 +388,16 @@ def SolveModel(scenario_name = None,
 			temp += v
 			# emissions due to transport of waste from county to facility 
 			total_emis += v * x['trans_emis']
+			# obj += (1-a) * v * x['trans_emis']
+
 			# emissions due to processing compost at facility
 			total_emis += v * process_emis
+			# obj += (1-a) * v * process_emis
+
 	#    temp = sum([c2f[muni][facility]['quantity'] for facilities in facilities['SwisNo']]) #Does the same thing
 		total_emis += landfill_ef*(-temp) #AVOIDED Landfill emissions
+		# obj += (1-a) * landfill_ef*(-temp) #AVOIDED Landfill emissions
+
 		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
 
 	# EMISSIONS FROM F TO R (and at Rangeland)
@@ -401,10 +414,15 @@ def SolveModel(scenario_name = None,
 				applied_amount = 0.0 
 			# emissions due to transport of compost from facility to landuse
 			total_emis += x['trans_emis']* applied_amount
+			# obj += (1-a) * x['trans_emis']* applied_amount
+
 			# emissions due to application of compost by manure spreader
 			total_emis += spreader_ef * applied_amount
+			# obj += (1-a) * spreader_ef * applied_amount
+
 			# sequestration of applied compost
 			total_emis += seq_f * applied_amount
+			# obj += (1-a) * seq_f * applied_amount
             
     	# translate to MMT
 	CO2mit = -total_emis/(10**9)
