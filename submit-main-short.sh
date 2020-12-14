@@ -2,7 +2,7 @@
 #SBATCH -N 1
 #SBATCH -C haswell
 #SBATCH -q regular
-#SBATCH -J compost-singleruncx                              
+#SBATCH -J compost-singlerunonKNL-debug
 #SBATCH --mail-user=anayahall@berkeley.edu
 #SBATCH --mail-type=ALL
 #SBATCH -t 08:00:00
