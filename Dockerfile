@@ -5,7 +5,7 @@ FROM python:3.6.5
 WORKDIR /usr/src/app
 #COPY . /usr/src/app/
 
-COPY ./scripts/main.py /usr/src/app/main.py
+COPY ./scripts/main.py /usr/src/app/main_v2.py
 COPY ./scripts/compostLP.py /usr/src/app/compostLP.py
 COPY ./scripts/dataload.py /usr/src/app/dataload.py
 COPY ./scripts/toydata.py /usr/src/app/toydata.py
@@ -29,6 +29,6 @@ RUN pip install -r requirements.txt
 
 
 # Run syncd in production mode
-CMD ["python", "main.py"]
+CMD ["python", "main_v2.py"]
 
 # CMD tail -f /dev/null
