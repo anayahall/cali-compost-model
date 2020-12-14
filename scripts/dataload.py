@@ -28,7 +28,7 @@ from california_cropland_cleaning import cleancropdata
 
 ############################################################
 # run on full data set or small sample (for testing!!)
-SUBSET = True 
+SUBSET = False 
 
 # Change this to activate/decativate print statements throughout
 DEBUG = True
@@ -204,7 +204,7 @@ croplands = cleancropdata(opj(DATA_DIR,
 #############################################################
 if SUBSET == True: 
 
-	subset_size = 25
+	subset_size = 55
 
 	print("* create SUBSET of data ( N=", subset_size, ") for testing locally *" )
 	

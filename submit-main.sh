@@ -14,6 +14,6 @@ export OMP_PROC_BIND=spread
 
 
 #run the application:
-module load python
+module load python3
 source activate myenv
-srun -n 1 -c 64 --cpu_bind=cores python scripts/main_v2.py
+srun -n 1 -c 64 --cpu_bind=cores python3 scripts/main_v2.py
