@@ -15,7 +15,7 @@ import geopandas as gpd
 import scipy as sp
 import pickle
 import time
-import yagmail
+# import yagmail
 
 
 ############################################################
@@ -28,7 +28,7 @@ CROPLANDS = False
 
 ############################################################
 # Load necessary other scripts (CompostLP and dataload)
-print(" - main - packages loaded - import compost LP script now") if (DEBUG == True) else ()
+print(" - main - packages loaded - import compost LP function now") if (DEBUG == True) else ()
 
 from compostLP import Haversine, Distance, Fetch, SolveModel, SaveModelVars
 

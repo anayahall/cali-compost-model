@@ -35,21 +35,28 @@ def cleancropdata(cropdata):
 	# highvaluecrops = ["D | DECIDUOUS FRUITS AND NUT", "V | VINEYARD", "T | TRUCK NURSERY AND BERRY CROPS", "C | CITRUS AND SUBTROPICAL"]
 
 	# croplands = cropmap[cropmap['DWR_Standa'].isin(highvaluecrops)==True]
-	croplands = cropmap[cropmap['Crop2014'].isin(highvaluecrops)==True]
+	croplands = cropmap[cropmap['Crop2014'].isin(highvaluecrops)==True].copy()
 
-	croplands['centroid'] = croplands['geometry'].centroid 
+	# print("about to set centroid")
+	croplands.loc[:,'centroid'] = croplands.loc[:,'geometry'].centroid 	
+	# centroidseries = croplands.geometry.centroid
+
 	# get cropland capacity: rated as 9t/ha for treecrops
 	# 0.58 tons per cubic meter
 	# 9 tons per hectare
 	# m3 = acres * (ha/acres) * (t/ha) * (m3/t)
-	croplands['capacity_m3'] = croplands['Acres'] * (0.404686) * (9) * (1/0.58)
+
+	# print("about to define capacity")
+	croplands['capacity_m3'] = croplands.apply(lambda row: row['Acres'] * (0.404686) * (9) * (1/0.58), axis = 1)
+	# print("about to reset index")
+
 	croplands.reset_index(inplace = True, drop = True)
 
 		## Save as shapefile
 	# out = r"clean/CropMap2014_clean.shp"
 	# croplands.to_file(driver='ESRI Shapefile', filename="treecrops.shp")
 
-
+	# print("done")
 	# gdf = croplands
 	return croplands
 # done! 

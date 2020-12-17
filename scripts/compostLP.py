@@ -7,6 +7,7 @@ import datetime
 from os.path import join as opj
 import json
 import sys
+import gurobipy as gp
 
 
 import pandas as pd
@@ -201,22 +202,30 @@ def SolveModel(scenario_name = None,
 	if feedstock == 'food_and_green':
 		# combine food and green waste (wet tons) and convert to cubic meters
 		# first, adjust food waste tonnage by fw reduction factor
-		msw.loc[(msw['subtype']=='MSW_food'),'wt'] = msw[msw['subtype'] == 'MSW_food']['wt']*(1-fw_reduction)
-		# then combine (sum) and convert to cubic meters	   
-		msw['disposal'] = msw.groupby(['muni_ID'])['wt'].transform('sum') / (1.30795*(1/2.24))
-		msw = msw.drop_duplicates(subset = 'muni_ID')
-		msw['subtype'].replace({'MSW_green':'food_and_green'}, inplace = True)
+		# print('feedstock food and green')
+		msw_temp = msw.copy()
+		msw_temp.loc[(msw_temp['subtype']=='MSW_food'),'wt'] = msw_temp[msw_temp['subtype'] == 'MSW_food']['wt']*(1-fw_reduction)
+		# then combine (sum) and convert to cubic meters	
+		# print('new disposal')   
+		msw_temp['disposal'] = msw_temp.groupby(['muni_ID'])['wt'].transform('sum') / (1.30795*(1/2.24))
+		msw_temp = msw_temp.drop_duplicates(subset = 'muni_ID')
+		# print('replacing')
+		msw_temp['subtype'].replace({'MSW_green':'food_and_green'}, inplace = True)
+		msw = msw_temp.copy()
 
 	elif feedstock == 'food':
+		msw_temp = msw.copy()
 		# subset just food waste and convert wet tons to cubic meters
-		msw = msw[(msw['subtype'] == "MSW_food")]
+		msw_temp = msw_temp[(msw_temp['subtype'] == "MSW_food")]
 		# msw['disposal'] = (1-fw_reduction)* counties['disposal_wm3']
-		msw['disposal'] = (1-fw_reduction)* msw['wt'] / (1.30795*(1/2.24))
+		msw_temp['disposal'] = (1-fw_reduction)* msw_temp['wt'] / (1.30795*(1/2.24))
+		msw = msw_temp.copy()
 
 	elif feedstock == 'green':
-		# make green!!
-		msw = msw[(msw['subtype'] == "MSW_green")]
-		msw['disposal'] = msw['wt'] / (1.30795*(1/2.24))
+		msw_temp = msw.copy()
+		msw_temp = msw_temp[(msw_temp['subtype'] == "MSW_green")]
+		msw_temp['disposal'] = msw_temp['wt'] / (1.30795*(1/2.24))
+		msw = msw_temp.copy()
 
 	# # # Priority settng for rangelands 
 	# critical only
@@ -432,15 +441,18 @@ def SolveModel(scenario_name = None,
 
 
 	############################################################
-	tzero = datetime.datetime.now()
-	print("-solving...  time: ", tzero)
-	print("*********************************************")
+	print("defining problem")
 
 	# DEFINE PROBLEM --> to MINIMIZE OBJECTIVE FUNCTION 
 	prob = cp.Problem(cp.Minimize(obj), cons)
 
+	tzero = datetime.datetime.now()
+	print("-solving with GUROBI...  time: ", tzero)
+	print("*********************************************")
+
 	# SOLVE MODEL TO GET FINAL VALUE (which will be in terms of kg of CO2)
-	val = prob.solve(gp=False, verbose = True)
+	val = prob.solve(solver=cp.GUROBI, gp=False, verbose = True)
+
 	now = datetime.datetime.now()
 	
 	project_cost = val
