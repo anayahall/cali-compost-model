@@ -68,8 +68,8 @@ for i in C_levels:
     print("Run #", i, "done!!") if (DEBUG == True) else ()
 
     
-# with open('out/resultsarray_2.p', 'wb') as f:
-#     pickle.dump(resultsarray, f)
+with open('out/resultsarray_2.p', 'wb') as f:
+    pickle.dump(resultsarray, f)
 
 print(resultsarray)
 ############################################################

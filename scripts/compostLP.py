@@ -169,7 +169,7 @@ def SolveModel(scenario_name = None,
 	:param feedstock type of feedstock to use in run (default is 'food_and_green', options are also 'food' or 'green')
 	
 	:param msw MSW data source
-	:param landuse landarea data source
+	:param landuse landarea data source, either: <rangelands> or <croplands> (orchards/vineyards)
 	:param facilities SWIS data source
 
 	:param disposal_min percent of waste to include in run (default is 1)
@@ -447,11 +447,11 @@ def SolveModel(scenario_name = None,
 	prob = cp.Problem(cp.Minimize(obj), cons)
 
 	tzero = datetime.datetime.now()
-	print("-solving with GUROBI...  time: ", tzero)
+	print("-solving with CPLEX...  time: ", tzero)
 	print("*********************************************")
 
 	# SOLVE MODEL TO GET FINAL VALUE (which will be in terms of kg of CO2)
-	val = prob.solve(solver=cp.GUROBI, gp=False, verbose = True)
+	val = prob.solve(solver=cp.CPLEX, gp=False, verbose = True)
 
 	now = datetime.datetime.now()
 	
