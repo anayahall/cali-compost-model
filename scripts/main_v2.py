@@ -35,7 +35,7 @@ from compostLP import Haversine, Distance, Fetch, SolveModel, SaveModelVars
 print(" - main - starting solves!!! ") if (DEBUG == True) else ()
 
 
-from dataload import msw, rangelands, facilities, grazed_rates
+from dataload import msw, rangelands, facilities, grazed_rates, perennial_rates
 
 ############################################################
 ### RUN SCENARIOS! #########################################
@@ -128,6 +128,8 @@ with open('out/f2r_RL5.p', 'wb') as f:
 with open('out/landapp_RL5.p', 'wb') as f:
     pickle.dump(land_app, f)
 
+    
+#### ##### ##### ##### #### #### #### #### ##### 
 run_name = 'CL_a05'
 
 c2f_val, f2r_val, land_app, cost_millions, CO2mit, abatement_cost = SolveModel(scenario_name = run_name,

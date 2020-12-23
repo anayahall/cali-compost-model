@@ -14,6 +14,9 @@ export OMP_PROC_BIND=spread
 
 
 #run the application:
+module load cmem
 module load python
-source activate myenv
-srun -n 1 -c 64 --cpu_bind=cores python scripts/main_v2_short.py
+module swap PrgEnv-intel PrgEnv-gnu
+module load openmpi-cmem
+source activate mylargemem
+srun -n 1 -c 64 --cpu_bind=cores --constraint=amd python scripts/main_v2_short.py
