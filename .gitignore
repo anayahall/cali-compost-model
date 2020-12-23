@@ -8,6 +8,7 @@ plots/
 maps/
 eqns/
 refs/
+out/
 siting_model/
 .ipynb_checkpoints/
 scripts/.DS_Store
