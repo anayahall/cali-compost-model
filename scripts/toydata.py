@@ -1,6 +1,7 @@
 # script to create toy data for model
 import numpy as np
 import geopandas as gpd
+import pandas as pd
 from shapely.geometry import Point, MultiPoint, Polygon, MultiPolygon
 
 
@@ -71,3 +72,17 @@ for i in np.arange(N):
         })
 
 facilities = gpd.GeoDataFrame(f)
+
+
+s = []
+for i in np.arange(N):
+    f.append(
+        {
+        'County' : ("county" + str(np.random.randint(0,1000))),
+        'seq_f' : np.random.randint(3000,100000),
+        })
+
+seq_factors =pd.DataFrame(s)
+
+
+

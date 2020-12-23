@@ -35,26 +35,26 @@ from compostLP import Haversine, Distance, Fetch, SolveModel, SaveModelVars
 print(" - main - starting solves!!! ") if (DEBUG == True) else ()
 
 
-from dataload import msw, rangelands, facilities
+from dataload import msw, rangelands, facilities, grazed_rates
 
 ############################################################
 ### RUN SCENARIOS! #########################################
 ############################################################
 
 # this loop is just to build out the abatement cost curve
-C_levels = np.arange(0.1, 3.1, 0.25)
+A_levels = np.arange(0, 1, 0.1)
 
-resultsarray = np.zeros([len(C_levels),2])
+resultsarray = np.zeros([len(A_levels),2])
 
 
 c = 0
-for i in C_levels:
+for i in A_levels:
     print("Count: ", c) if (DEBUG == True) else ()
     run_name = str("run_"+str(i))
     print("RUNNING: ", run_name) if (DEBUG == True) else ()
     # RUN THE MODEL!!!
     c2f_val, f2r_val, land_app, cost_millions, CO2mit, abatement_cost = SolveModel(scenario_name = run_name,
-        emissions_constraint = i,
+        a = i,
         msw = msw,
         landuse = rangelands,
         facilities = facilities,
@@ -68,7 +68,7 @@ for i in C_levels:
     print("Run #", i, "done!!") if (DEBUG == True) else ()
 
     
-with open('out/resultsarray_2.p', 'wb') as f:
+with open('out/resultsarray.p', 'wb') as f:
     pickle.dump(resultsarray, f)
 
 print(resultsarray)
