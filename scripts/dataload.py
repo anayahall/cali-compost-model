@@ -170,27 +170,30 @@ print("rangelands loaded") if (DEBUG == True) else ()
 # ##############################################################
 # # # UPDATE 08032020 -- bring in new rangelands (and keep naming convention)
 # print("bringing in second rangeland data file") if (DEBUG == True) else ()
-# rangelands = gpd.read_file(opj(DATA_DIR, "rangelands/DOC/ds553.shp"))
-# rangelands = rangelands.to_crs(epsg=4326)
+rangelands = gpd.read_file(opj(DATA_DIR, "rangelands/DOC/ds553.shp"))
+rangelands = rangelands.to_crs(epsg=4326)
 
-# rangelands['OBJECTID'] = rangelands.index
-
-
-# # Each planning unit falls into one of 3 groups.
-# # 0. Not included in priority areas.
-# # 1. Important for rangeland goals - selected 3-7 times of 10.
-# # 2. Critical for rangeland goals- selected 8-10 times
+rangelands['OBJECTID'] = rangelands.index
 
 
-# # convert area capacity into volume capacity
-# rangelands['area_ha'] = rangelands['Shape_area']/10000 # convert area in m2 to hectares
-# rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
-# # # estimate centroid
-# rangelands['centroid'] = rangelands['geometry'].centroid 
+# Each planning unit falls into one of 3 groups.
+# 0. Not included in priority areas.
+# 1. Important for rangeland goals - selected 3-7 times of 10.
+# 2. Critical for rangeland goals- selected 8-10 times
 
 
-# # optional - omit non-priority land:
-# rangelands = rangelands[rangelands['Priority'] != 0]
+# convert area capacity into volume capacity
+rangelands['area_ha'] = rangelands['Shape_area']/10000 # convert area in m2 to hectares
+rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
+# # estimate centroid
+rangelands = rangelands.to_crs(epsg=3310) # change to projected crs for getting centroid
+rangelands['centroid'] = rangelands['geometry'].centroid 
+rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
+
+
+
+# optional - omit non-priority land:
+rangelands = rangelands[rangelands['Priority'] == 2]
 
 # # # run full model below and see if it changes numbers dramatically, 
 # # # then think through how to rename these such that it fits with croplands too. 
