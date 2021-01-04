@@ -1,26 +1,38 @@
-attrs @ file:///tmp/build/80754af9/attrs_1604765588209/work
+attrs==20.3.0
 certifi==2020.12.5
-click==7.1.2
+chardet==3.0.4
+Click==7.0
 click-plugins==1.1.1
 cligj==0.7.1
-cvxpy @ file:///Users/runner/miniforge3/conda-bld/cvxpy_1603433643189/work
-ecos @ file:///Users/runner/miniforge3/conda-bld/ecos_1604252831233/work
-Fiona==1.8.13.post1
-future @ file:///Users/runner/miniforge3/conda-bld/future_1605203679397/work
-GDAL==3.0.2
-geopandas @ file:///tmp/build/80754af9/geopandas_1594937497867/work
-mkl-fft==1.2.0
-mkl-random==1.1.1
-mkl-service==2.3.0
+colorama==0.4.1
+cvxpy @ file:///home/conda/feedstock_root/build_artifacts/cvxpy_1603433624141/work
+cycler==0.10.0
+decorator==4.4.0
+docutils==0.15.2
+ecos @ file:///home/conda/feedstock_root/build_artifacts/ecos_1604252808253/work
+Fiona==1.8.18
+future @ file:///home/conda/feedstock_root/build_artifacts/future_1605203483395/work
+geopandas==0.8.1
+idna==2.8
+ipython-genutils==0.2.0
+kiwisolver==1.1.0
+MarkupSafe==1.1.1
 munch==2.5.0
-numpy @ file:///opt/concourse/worker/volumes/live/a1b5ea96-b05c-40ba-5dfb-4542ece1c186/volume/numpy_and_numpy_base_1603491228242/work
+nbformat==4.4.0
+numpy @ file:///home/conda/feedstock_root/build_artifacts/numpy_1604945996409/work
 osqp==0.6.1
 pandas==1.1.5
-pyproj==2.6.1.post1
-python-dateutil==2.8.1
-pytz @ file:///tmp/build/80754af9/pytz_1606604771399/work
-Rtree==0.9.4
-scipy==1.2.1
-scs @ file:///Users/runner/miniforge3/conda-bld/scs_1604253585400/work
-Shapely @ file:///opt/concourse/worker/volumes/live/90b213a3-40f8-45c1-480b-3008028b4f18/volume/shapely_1599817167930/work
-six @ file:///opt/concourse/worker/volumes/live/f983ba11-c9fe-4dff-7ce7-d89b95b09771/volume/six_1605205318156/work
+Pygments==2.4.2
+pyproj==3.0.0.post1
+python-dateutil==2.8.0
+python3-nersc-customs==0.2.0
+python3-nersc-modster==0.3.0
+python3-nersc-sitecustomize==0.2.0
+python3-nerscjson==0.9
+pytz==2020.4
+PyYAML==5.1.2
+requests==2.22.0
+scipy @ file:///home/conda/feedstock_root/build_artifacts/scipy_1604304773994/work
+scs @ file:///home/conda/feedstock_root/build_artifacts/scs_1604253315854/work
+Shapely==1.7.1
+six==1.15.0
