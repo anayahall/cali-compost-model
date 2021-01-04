@@ -342,6 +342,10 @@ def SolveModel(scenario_name = None,
 		obj += (1-a) * landfill_ef*(-temp) #AVOIDED Landfill emissions ## pareto analysis
 
 		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
+	
+
+	# seq_f = 105
+
 
 	# EMISSIONS FROM F TO R (and at Rangeland)
 	for facility in facilities['SwisNo']:
@@ -351,10 +355,10 @@ def SolveModel(scenario_name = None,
 			
 
 			# pull county specific sequestration rate!!
-			# county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
+			county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
 			# print("COUNTYYYYYYYYYYYYYY: ", county)
-			# seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
-			seq_f = 105
+			seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
+			
 			# print("SEQ F: ", seq_f)
 
 
@@ -444,7 +448,7 @@ def SolveModel(scenario_name = None,
 			temp_out += x['quantity']	# sum of output from facilty to land
 		cons += [temp_out == waste_to_compost*temp_in]
 
-   # CALCULATING EMISSIONS HERE IF USING AS CONSTRAINT     
+   # CALCULATE EMISSIONS HERE IF USING AS CONSTRAINT     
 	total_emis = 0
 
  #    	# translate to MMT

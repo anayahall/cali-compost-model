@@ -66,7 +66,9 @@ with open('out/f2r_RL5.p', 'wb') as f:
 # SAVE LAND APPLICATION DICT
 with open('out/landapp_RL5.p', 'wb') as f:
     pickle.dump(land_app, f)
-    
+
+
+raise Exception("SINGLE RUN - RANGELANDS")    
 #### ##### ##### ##### #### #### #### #### ##### 
 run_name = 'CL_a05'
 

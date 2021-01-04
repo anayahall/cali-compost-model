@@ -28,7 +28,7 @@ from california_cropland_cleaning import cleancropdata
 
 ############################################################
 # run on full data set or small sample (for testing!!)
-SUBSET = False 
+SUBSET = True 
 
 # Change this to activate/decativate print statements throughout
 DEBUG = True
@@ -257,7 +257,7 @@ grazed_rates['seq_f'] = grazed_rates['GHG Emissions'] / 0.404686 / 63.5 / 0.001
 #############################################################
 if SUBSET == True: 
 
-	subset_size = 65
+	subset_size = 20
 
 	print("* create SUBSET of data ( N=", subset_size, ") for testing locally *" )
 	
