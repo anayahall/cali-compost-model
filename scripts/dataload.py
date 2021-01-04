@@ -227,13 +227,13 @@ perennial_rates['seq_f'] = perennial_rates['GHG Emissions'] / 0.404686 / 63.5 / 
 
 
 
-print("reading annual")
-annual_rates = pd.read_csv(opj(DATA_DIR,
-						annual_file))
-annual_rates['seq_f'] = annual_rates['GHG Emissions'] / 0.404686 / 63.5 / 0.001
+# print("reading annual")
+# annual_rates = pd.read_csv(opj(DATA_DIR,
+# 						annual_file))
+# annual_rates['seq_f'] = annual_rates['GHG Emissions'] / 0.404686 / 63.5 / 0.001
 
-# for county in annual_rates['County']:
-# 	rate = Fetch(annual_rates, 'County', county, value)
+# # for county in annual_rates['County']:
+# # 	rate = Fetch(annual_rates, 'County', county, value)
 
 print("reading grazed")
 grazed_rates = pd.read_csv(opj(DATA_DIR, 
@@ -257,7 +257,7 @@ grazed_rates['seq_f'] = grazed_rates['GHG Emissions'] / 0.404686 / 63.5 / 0.001
 #############################################################
 if SUBSET == True: 
 
-	subset_size = 55
+	subset_size = 65
 
 	print("* create SUBSET of data ( N=", subset_size, ") for testing locally *" )
 	

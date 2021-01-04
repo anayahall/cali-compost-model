@@ -35,14 +35,14 @@ from compostLP import Haversine, Distance, Fetch, SolveModel, SaveModelVars
 print(" - main - starting solves!!! ") if (DEBUG == True) else ()
 
 
-from dataload import msw, rangelands, facilities, grazed_rates, perennial_rates
+from dataload import msw, rangelands, facilities, grazed_rates
 
 ############################################################
 ### RUN SCENARIOS! #########################################
 ############################################################
 
 # this loop is just to build out the abatement cost curve
-A_levels = np.arange(0, 1, 0.1)
+A_levels = np.arange(0, 1, 0.5)
 
 resultsarray = np.zeros([len(A_levels),2])
 
@@ -73,8 +73,14 @@ with open('out/resultsarray_RL.p', 'wb') as f:
     pickle.dump(resultsarray, f)
 
 print("RANGELANDS:" , resultsarray)
-############################################################
 
+
+
+raise Exception('pause....')
+
+
+############################################################
+resultsarray = np.zeros([len(A_levels),2])
 c = 0
 for i in A_levels:
     print("Count: ", c) if (DEBUG == True) else ()
@@ -103,12 +109,14 @@ with open('out/resultsarray_CL.p', 'wb') as f:
 print("CROPLANDS:" , resultsarray)
 ############################################################
 
+
+
 # now run at midlevel and save flows
 print("---about to run at midlevel ish---")
 run_name = 'RL_a05'
 
 c2f_val, f2r_val, land_app, cost_millions, CO2mit, abatement_cost = SolveModel(scenario_name = run_name,
-        emissions_constraint = 1,
+        a = 0.5,
         msw = msw,
         landuse = rangelands,
         facilities = facilities,
@@ -133,7 +141,7 @@ with open('out/landapp_RL5.p', 'wb') as f:
 run_name = 'CL_a05'
 
 c2f_val, f2r_val, land_app, cost_millions, CO2mit, abatement_cost = SolveModel(scenario_name = run_name,
-        emissions_constraint = 1,
+        a = 0.5,
         msw = msw,
         landuse = croplands,
         facilities = facilities,
