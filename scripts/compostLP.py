@@ -19,7 +19,7 @@ import scipy as sp
 
 ############################################################
 # Change this to activate/decativate print statements throughout
-DEBUG = False
+DEBUG = True
 ############################################################
 
 # set data directories (relative)
@@ -107,7 +107,8 @@ def SaveModelVars(c2f, f2r):
 # ^^ this script loads the data used in the analysis
 # requires original shapefiles too large to host on github
 # comment out if just testing linear programming model
-from dataload import grazed_rates, perennial_rates, annual_rates
+from dataload import grazed_rates
+
 
 print(" - compostLP - ")
 # LOAD TOY DATA 
@@ -314,7 +315,7 @@ def SolveModel(scenario_name = None,
 	# emissions due to waste remaining in muni
 	for muni in msw['muni_ID']:
 		count += 1
-		print("muni ID: ", muni, " ## ", count,  "-- (AVOIDED) LANDFILL EMISSIONS") if (DEBUG == True) else ()
+		print("muni ID: ", muni, " ## ", count,  "-- EMISSIONS") if (DEBUG == True) else ()
 		county_disposal = Fetch(msw, 'muni_ID', muni, 'disposal')
 		temp = 0
 		for facility in facilities['SwisNo']:
@@ -350,9 +351,10 @@ def SolveModel(scenario_name = None,
 			
 
 			# pull county specific sequestration rate!!
-			county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
+			# county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
 			# print("COUNTYYYYYYYYYYYYYY: ", county)
-			seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
+			# seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
+			seq_f = 105
 			# print("SEQ F: ", seq_f)
 
 
@@ -523,86 +525,86 @@ def SolveModel(scenario_name = None,
 # this is replicated from above, but now uses the solved values to calculate
 	total_emis = 0
 
-	# EMISIONS FROM C TO F (at at Facility)
-	count = 0 # for keeping track of the municipality count
-	# emissions due to waste remaining in muni
-	for muni in msw['muni_ID']:
-		count += 1
-		print("muni ID: ", muni, " ## ", count,  "-- (AVOIDED) LANDFILL EMISSIONS") if (DEBUG == True) else ()
-		county_disposal = Fetch(msw, 'muni_ID', muni, 'disposal')
-		temp = 0
-		for facility in facilities['SwisNo']:
-			print("c2f - facility: ", facility) if (DEBUG == True) else ()
-			#grab quantity and sum for each county
-			x    = c2f[muni][facility]
-			if x['quantity'].value is not None:
-				v = x['quantity'].value  
-# 			if x['quantity'] is not None:
-# 				v = x['quantity']  
-			else:
-				v = 0.0
-			temp += v
-			# emissions due to transport of waste from county to facility 
-			total_emis += v * x['trans_emis']
-			# emissions due to processing compost at facility
-			total_emis += v * process_emis
-	#    temp = sum([c2f[muni][facility]['quantity'] for facilities in facilities['SwisNo']]) #Does the same thing
-		total_emis += landfill_ef*(-temp) #AVOIDED Landfill emissions
-		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
+# 	# EMISIONS FROM C TO F (at at Facility)
+# 	count = 0 # for keeping track of the municipality count
+# 	# emissions due to waste remaining in muni
+# 	for muni in msw['muni_ID']:
+# 		count += 1
+# 		print("muni ID: ", muni, " ## ", count,  "-- (AVOIDED) LANDFILL EMISSIONS") if (DEBUG == True) else ()
+# 		county_disposal = Fetch(msw, 'muni_ID', muni, 'disposal')
+# 		temp = 0
+# 		for facility in facilities['SwisNo']:
+# 			print("c2f - facility: ", facility) if (DEBUG == True) else ()
+# 			#grab quantity and sum for each county
+# 			x    = c2f[muni][facility]
+# 			if x['quantity'].value is not None:
+# 				v = x['quantity'].value  
+# # 			if x['quantity'] is not None:
+# # 				v = x['quantity']  
+# 			else:
+# 				v = 0.0
+# 			temp += v
+# 			# emissions due to transport of waste from county to facility 
+# 			total_emis += v * x['trans_emis']
+# 			# emissions due to processing compost at facility
+# 			total_emis += v * process_emis
+# 	#    temp = sum([c2f[muni][facility]['quantity'] for facilities in facilities['SwisNo']]) #Does the same thing
+# 		total_emis += landfill_ef*(-temp) #AVOIDED Landfill emissions
+# 		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
 
-	# EMISSIONS FROM F TO R (and at Rangeland)
-	for facility in facilities['SwisNo']:
-		print("SW facility: ", facility, "--to LAND") if (DEBUG == True) else ()
-		for land in landuse['OBJECTID']:
-			print('f2r - land #: ', land) if (DEBUG == True) else ()
+# 	# EMISSIONS FROM F TO R (and at Rangeland)
+# 	for facility in facilities['SwisNo']:
+# 		print("SW facility: ", facility, "--to LAND") if (DEBUG == True) else ()
+# 		for land in landuse['OBJECTID']:
+# 			print('f2r - land #: ', land) if (DEBUG == True) else ()
 
-			# pull county specific sequestration rate!!
-			county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
-			# print("COUNTYYYYYYYYYYYYYY: ", county)
-			seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
-			# print("SEQ F: ", seq_f)
+# 			# pull county specific sequestration rate!!
+# 			county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
+# 			# print("COUNTYYYYYYYYYYYYYY: ", county)
+# 			seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
+# 			# print("SEQ F: ", seq_f)
 
-			x = f2r[facility][land]
-			if x['quantity'].value is not None:
-				applied_amount = x['quantity'].value  
-# 			if x['quantity'] is not None:
-# 				applied_amount = x['quantity']  
-			else:
-				applied_amount = 0.0 
-			# emissions due to transport of compost from facility to landuse
-			total_emis += x['trans_emis']* applied_amount
-			# emissions due to application of compost by manure spreader
-			total_emis += spreader_ef * applied_amount
-			# sequestration of applied compost
-			total_emis += seq_f * applied_amount
+# 			x = f2r[facility][land]
+# 			if x['quantity'].value is not None:
+# 				applied_amount = x['quantity'].value  
+# # 			if x['quantity'] is not None:
+# # 				applied_amount = x['quantity']  
+# 			else:
+# 				applied_amount = 0.0 
+# 			# emissions due to transport of compost from facility to landuse
+# 			total_emis += x['trans_emis']* applied_amount
+# 			# emissions due to application of compost by manure spreader
+# 			total_emis += spreader_ef * applied_amount
+# 			# sequestration of applied compost
+# 			total_emis += seq_f * applied_amount
             
     	# translate to MMT
 	CO2mit = -total_emis/(10**9)
 
 	# PROJECT COST!
 	project_cost = 0
-	# transport costs - county to facility
-	for muni in msw['muni_ID']:
-		print(" >  c2f cost for muni: ", muni) if (DEBUG == True) else ()
-		# cost_dict[muni] = {}
-		ship_cost = 0
-		# cost_dict[county]['COUNTY'] = county
-		for facility in facilities['SwisNo']:
-			# print("c2f distance cost for facility: ", facility)
-			x    = c2f[muni][facility]
-			project_cost += x['quantity'].value * x['trans_cost']
+	# # transport costs - county to facility
+	# for muni in msw['muni_ID']:
+	# 	print(" >  c2f cost for muni: ", muni) if (DEBUG == True) else ()
+	# 	# cost_dict[muni] = {}
+	# 	ship_cost = 0
+	# 	# cost_dict[county]['COUNTY'] = county
+	# 	for facility in facilities['SwisNo']:
+	# 		# print("c2f distance cost for facility: ", facility)
+	# 		x    = c2f[muni][facility]
+	# 		project_cost += x['quantity'].value * x['trans_cost']
 
-		# cost_dict[muni]['cost'] = int(round(ship_cost))
+	# 	# cost_dict[muni]['cost'] = int(round(ship_cost))
 
-	for facility in facilities['SwisNo']:
-		print(" >  f2r  cost for facility and land: ", facility) if (DEBUG == True) else ()
-		for land in landuse['OBJECTID']:
-			x = f2r[facility][land]
-			# project_cost due to transport of compost from facility to landuse
-			project_cost += x['quantity'].value * x['trans_cost'] # new pareto analysis
+	# for facility in facilities['SwisNo']:
+	# 	print(" >  f2r  cost for facility and land: ", facility) if (DEBUG == True) else ()
+	# 	for land in landuse['OBJECTID']:
+	# 		x = f2r[facility][land]
+	# 		# project_cost due to transport of compost from facility to landuse
+	# 		project_cost += x['quantity'].value * x['trans_cost'] # new pareto analysis
 
-			# project_cost due to application of compost by manure spreader
-			project_cost += a * x['quantity'].value * spreader_cost # new pareto analysis
+	# 		# project_cost due to application of compost by manure spreader
+	# 		project_cost += a * x['quantity'].value * spreader_cost # new pareto analysis
 	
 
 #########################################
