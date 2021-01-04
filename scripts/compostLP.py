@@ -344,7 +344,7 @@ def SolveModel(scenario_name = None,
 		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
 	
 
-	# seq_f = 105
+	seq_f = 105
 
 
 	# EMISSIONS FROM F TO R (and at Rangeland)
@@ -355,9 +355,9 @@ def SolveModel(scenario_name = None,
 			
 
 			# pull county specific sequestration rate!!
-			county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
+# 			county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
 			# print("COUNTYYYYYYYYYYYYYY: ", county)
-			seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
+# 			seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
 			
 			# print("SEQ F: ", seq_f)
 
@@ -469,7 +469,8 @@ def SolveModel(scenario_name = None,
 	print("*********************************************")
 
 	# SOLVE MODEL TO GET FINAL VALUE (which will be in terms of kg of CO2)
-	val = prob.solve(solver=cp.GUROBI, gp=False, verbose = True)
+#     solver=cp.GUROBI, 
+	val = prob.solve(verbose = True)
  
 	now = datetime.datetime.now()
 	
@@ -488,46 +489,46 @@ def SolveModel(scenario_name = None,
 
 	# Rangeland area covered (ha) & applied amount by land
 	land_app = {}
-	for land in landuse['OBJECTID']:
-		print("Calculating land area & amount applied for land: ", land) if (DEBUG == True) else ()
-		r_string = str(land)
-		applied_volume = 0
-		area = 0
-		temp_transport_emis = 0
-		temp_transport_cost = 0
-		land_app[r_string] = {}
-		land_app[r_string]['OBJECTID'] = r_string
+# 	for land in landuse['OBJECTID']:
+# 		print("Calculating land area & amount applied for land: ", land) if (DEBUG == True) else ()
+# 		r_string = str(land)
+# 		applied_volume = 0
+# 		area = 0
+# 		temp_transport_emis = 0
+# 		temp_transport_cost = 0
+# 		land_app[r_string] = {}
+# 		land_app[r_string]['OBJECTID'] = r_string
 
-		# pull county specific sequestration rate!!
-		county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
-		# print("COUNTYYYYYYYYYYYYYY: ", county)
-		seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
-		# print("SEQ F: ", seq_f)
+# 		# pull county specific sequestration rate!!
+# 		county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
+# 		# print("COUNTYYYYYYYYYYYYYY: ", county)
+# 		seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
+# 		# print("SEQ F: ", seq_f)
 		
-		# toggle this on to collect County info. not in the second landuse dataset
-		# land_app[r_string]['COUNTY'] = Fetch(landuse, 'OBJECTID', land, 'COUNTY') #FLAG!
-		for facility in facilities['SwisNo']:
-			# print("from facility: ", facility)
-			x = f2r[facility][land]
-			if x['quantity'].value is not None:
-				v = x['quantity'].value  
-			else:
-				v = 0.0 
-			applied_volume += v 
-			temp_transport_emis += applied_volume* x['trans_emis']
-			temp_transport_cost += applied_volume *x['trans_cost']
-			area += int(round(applied_volume * (1/63.5)))
-		land_app[r_string]['area_treated'] = area
-		land_app[r_string]['volume'] = int(round(applied_volume))
-		land_app[r_string]['application_cost'] = int(round(applied_volume))*spreader_cost
-		land_app[r_string]['application_emis'] = int(round(applied_volume))*spreader_ef
-		land_app[r_string]['trans_emis'] = temp_transport_emis
-		land_app[r_string]['trans_cost'] = temp_transport_cost
-		land_app[r_string]['sequestration'] = applied_volume*seq_f
+# 		# toggle this on to collect County info. not in the second landuse dataset
+# 		# land_app[r_string]['COUNTY'] = Fetch(landuse, 'OBJECTID', land, 'COUNTY') #FLAG!
+# 		for facility in facilities['SwisNo']:
+# 			# print("from facility: ", facility)
+# 			x = f2r[facility][land]
+# 			if x['quantity'].value is not None:
+# 				v = x['quantity'].value  
+# 			else:
+# 				v = 0.0 
+# 			applied_volume += v 
+# 			temp_transport_emis += applied_volume* x['trans_emis']
+# 			temp_transport_cost += applied_volume *x['trans_cost']
+# 			area += int(round(applied_volume * (1/63.5)))
+# 		land_app[r_string]['area_treated'] = area
+# 		land_app[r_string]['volume'] = int(round(applied_volume))
+# 		land_app[r_string]['application_cost'] = int(round(applied_volume))*spreader_cost
+# 		land_app[r_string]['application_emis'] = int(round(applied_volume))*spreader_ef
+# 		land_app[r_string]['trans_emis'] = temp_transport_emis
+# 		land_app[r_string]['trans_cost'] = temp_transport_cost
+# 		land_app[r_string]['sequestration'] = applied_volume*seq_f
 
 
 # this is replicated from above, but now uses the solved values to calculate
-	total_emis = 0
+# 	total_emis = 0
 
 # 	# EMISIONS FROM C TO F (at at Facility)
 # 	count = 0 # for keeping track of the municipality count

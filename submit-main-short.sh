@@ -1,8 +1,8 @@
-#!/bin/bash
+##!/bin/bash
 #SBATCH -N 1
-#SBATCH -C haswell
-#SBATCH -q regular
-#SBATCH -J compost-singlerunonKNL-debug
+#SBATCH -C amd
+#SBATCH -q bigmem
+#SBATCH -J compost-bigmem
 #SBATCH --mail-user=anayahall@berkeley.edu
 #SBATCH --mail-type=ALL
 #SBATCH -t 08:00:00
@@ -14,9 +14,7 @@ export OMP_PROC_BIND=spread
 
 
 #run the application:
-module load cmem
 module load python
 module swap PrgEnv-intel PrgEnv-gnu
-module load openmpi-cmem
 source activate mylargemem
-srun -n 1 -c 64 --cpu_bind=cores --constraint=amd python scripts/main_v2_short.py
+srun -n 1 -c 64 --cpu_bind=cores python scripts/main_v2_short.py
