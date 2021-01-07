@@ -19,7 +19,7 @@ import scipy as sp
 
 ############################################################
 # Change this to activate/decativate print statements throughout
-DEBUG = True
+DEBUG = False
 ############################################################
 
 # set data directories (relative)
@@ -344,7 +344,7 @@ def SolveModel(scenario_name = None,
 		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
 	
 
-	seq_f = 105
+	seq_f = -105
 
 
 	# EMISSIONS FROM F TO R (and at Rangeland)
@@ -356,10 +356,10 @@ def SolveModel(scenario_name = None,
 
 			# pull county specific sequestration rate!!
 # 			county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
-			# print("COUNTYYYYYYYYYYYYYY: ", county)
-# 			seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
+# 			print("COUNTYYYYYYYYYYYYYY: ", county)
+# 			seq_f = -Fetch(seq_factors, 'County', county, 'seq_f')
 			
-			# print("SEQ F: ", seq_f)
+# 			print("SEQ F: ", seq_f)
 
 
 
@@ -381,6 +381,21 @@ def SolveModel(scenario_name = None,
 			# sequestration of applied compost
 			# total_emis += seq_f * applied_amount # # for use as constraint in cost opt
 			obj += (1-a) * seq_f * applied_amount # pareto analysis
+            
+            
+#     ### REDO OTHER WAY?
+#     for land in landuse['OBJECTID']:
+#         print("LAND #", land)
+#         # pull county specific sequestration rate!!
+#         county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
+#         print("COUNTYYYYYYYYYYYYYY: ", county)
+#         seq_f = -Fetch(seq_factors, 'County', county, 'seq_f')
+#         print("SEQ F: ", seq_f)
+        
+#         for facility in facilities['SwisNo']:
+#             print('SW facility', facility)
+#             x = f2r[facility][land]
+            
 
 	print("OBJ (C2f + F2R) SIZE: ", sys.getsizeof(obj)) if (DEBUG == True) else ()
 
@@ -465,16 +480,16 @@ def SolveModel(scenario_name = None,
 	prob = cp.Problem(cp.Minimize(obj), cons)
 
 	tzero = datetime.datetime.now()
-	print("-solving with GUROBI...  time: ", tzero)
+	print("-solving with DEFAULT...  time: ", tzero)
 	print("*********************************************")
 
 	# SOLVE MODEL TO GET FINAL VALUE (which will be in terms of kg of CO2)
-#     solver=cp.GUROBI, 
-	val = prob.solve(verbose = True)
+#      
+	val = prob.solve(solver = cp.GUROBI, verbose = True)
  
 	now = datetime.datetime.now()
 	
-	project_cost = val
+# 	project_cost = val
 
 	print("TIME ELAPSED SOLVING: ", str(now - tzero))
 	print("*********************************************")
@@ -527,10 +542,10 @@ def SolveModel(scenario_name = None,
 # 		land_app[r_string]['sequestration'] = applied_volume*seq_f
 
 
-# this is replicated from above, but now uses the solved values to calculate
-# 	total_emis = 0
+    # this is replicated from above, but now uses the solved values to calculate
+	total_emis = 0
 
-# 	# EMISIONS FROM C TO F (at at Facility)
+	# EMISIONS FROM C TO F (at at Facility)
 # 	count = 0 # for keeping track of the municipality count
 # 	# emissions due to waste remaining in muni
 # 	for muni in msw['muni_ID']:
@@ -583,7 +598,7 @@ def SolveModel(scenario_name = None,
 # 			# sequestration of applied compost
 # 			total_emis += seq_f * applied_amount
             
-    	# translate to MMT
+#     	# translate to MMT
 	CO2mit = -total_emis/(10**9)
 
 	# PROJECT COST!
@@ -613,21 +628,22 @@ def SolveModel(scenario_name = None,
 	
 
 #########################################
-
+	print("VAL: ", val) 
 	cost_millions = (project_cost/(10**6))    
 	print("TOTAL COST (Millions $) : ", cost_millions)
 	print("TOTAL EMISSIONS (kg CO2e) : ", total_emis)
 	print("*********************************************")
 	print("CO2 Mitigated (MMt CO2eq) = {0}".format(CO2mit))
 
-	# val is in terms of dollars, total emis is in kg
-	result = val/total_emis
-	# result is in $ per kg
-	#convert to $ per ton for abatement cost!!
-	abatement_cost = (-result*1000)
-	print("*********************************************")
-	print("$/tCO2e MITIGATED: ", abatement_cost)
-	print("*********************************************")
+# 	# val is in terms of dollars, total emis is in kg
+# 	result = val/total_emis
+# 	# result is in $ per kg
+# 	#convert to $ per ton for abatement cost!!
+# 	abatement_cost = (-result*1000)
+	abatement_cost = 0
+# 	print("*********************************************")
+# 	print("$/tCO2e MITIGATED: ", abatement_cost)
+# 	print("*********************************************")
 
 
 	c2f_values, f2r_values = SaveModelVars(c2f, f2r)

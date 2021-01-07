@@ -1,4 +1,4 @@
-##!/bin/bash
+#!/bin/bash
 #SBATCH -N 1
 #SBATCH -C amd
 #SBATCH -q bigmem
