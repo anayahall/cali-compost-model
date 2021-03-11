@@ -42,7 +42,7 @@ from dataload import msw, rangelands, facilities, grazed_rates
 ############################################################
 
 # this loop is just to build out the abatement cost curve
-A_levels = np.arange(0, 1, 0.5)
+A_levels = np.arange(0, 2, 1)
 
 resultsarray = np.zeros([len(A_levels),2])
 

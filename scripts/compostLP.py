@@ -141,7 +141,7 @@ def SolveModel(scenario_name = None,
 	seq_factors = grazed_rates,
 	
 	# Scenario settings
-	emissions_constraint = 1,
+# 	emissions_constraint = 1,
 	fw_reduction = 0,    # food waste reduced/recovered pre-disposal 
 	ignore_capacity = False, # toggle to ignore facility capacity info
 	capacity_multiplier = 1, # can inflate capacity 
@@ -484,8 +484,8 @@ def SolveModel(scenario_name = None,
 	print("*********************************************")
 
 	# SOLVE MODEL TO GET FINAL VALUE (which will be in terms of kg of CO2)
-#      
-	val = prob.solve(solver = cp.GUROBI, verbose = True)
+    #solver = cp.GUROBI, <- can't solve....
+	val = prob.solve( verbose = True)
  
 	now = datetime.datetime.now()
 	
