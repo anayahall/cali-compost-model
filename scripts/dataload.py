@@ -186,9 +186,9 @@ rangelands['COUNTY'] = rangelands['NAME']
 rangelands['area_ha'] = rangelands['Shape_area']/10000 # convert area in m2 to hectares
 rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
 # # estimate centroid
-rangelands = rangelands.to_crs(epsg=3310) # change to projected crs for getting centroid
+# rangelands_temp = rangelands.to_crs(epsg=3310) # change to projected crs for getting centroid
 rangelands['centroid'] = rangelands['geometry'].centroid 
-rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
+# rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
 
 
 
@@ -267,7 +267,7 @@ if SUBSET == True:
 	msw = msw[0:(2*subset_size)]
 	facilities = facilities[0:subset_size]
 	rangelands = rangelands[0:subset_size]
-	croplands = croplands[0:subset_size]
+	# croplands = croplands[0:subset_size]
 
 ############################################################
 # raise Exception("data loaded - pre optimization")

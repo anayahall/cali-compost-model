@@ -12,7 +12,7 @@ from geopandas import GeoSeries, GeoDataFrame
  
 
 #change wd
-os.chdir("/Users/anayahall/projects/compopt")
+# os.chdir("/Users/anayahall/projects/compopt")
 
 #######################################################################
 # Starting from INTERIM data (somewhat preprocessed in R - may come back to)
@@ -21,6 +21,10 @@ os.chdir("/Users/anayahall/projects/compopt")
 # orginal data cleaned from excel: "data/swis_clean.csv"
 # #filter to composting (may come back to this to select all other sites as well)
 # comp_swis <- swis_clean %>% filter(str_detect(Activity, "Compost") | str_detect(Activity, "Chip") & OperationalStatus != "Closed")
+
+# TODO: MOVE ALL ^^ TO PYTHON
+# activities: compost processors and maybe transfers stations?
+
 
 #read in compost facilities csv
 df = pd.read_csv("data/interim/swis_compost.csv")
