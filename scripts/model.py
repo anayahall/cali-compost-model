@@ -543,10 +543,10 @@ def RunModel_MinCost(
 			# print("c2f distance cost for facility: ", facility)
 			x = c2f[muni][facility]
 			if x['quantity'] is not None:
-                v = x['quantity']
-            else:
-                v = 0.0
-            obj += v *x['trans_cost'] # original cost opt 
+				v = x['quantity']
+			else:
+				v = 0.0
+			obj += v *x['trans_cost'] # original cost opt 
 
 
 	for facility in facilities['SwisNo']:
