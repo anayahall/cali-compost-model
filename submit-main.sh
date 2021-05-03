@@ -16,5 +16,5 @@ export OMP_PROC_BIND=spread
 #run the application:
 module load python
 module swap PrgEnv-intel PrgEnv-gnu
-source activate mylargemem
+source activate mylargemem2
 srun -n 1 -c 64 --cpu_bind=cores python scripts/main_v2.py

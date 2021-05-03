@@ -514,7 +514,6 @@ def RunModel_MinCost(
 			c2f[muni][facility]['quantity'] = cp.Variable()
 			# since already grabbing this relationship, might as well store distance and associated emis/cost
 			dist = Distance(cloc,floc)
-			c2f[muni][facility]['trans_emis'] = dist*detour_factor*kilometres_to_emissions
 			c2f[muni][facility]['trans_cost'] = dist*detour_factor*c2f_trans_cost
 
 	# amount of compost to send to rangeland 
@@ -529,7 +528,6 @@ def RunModel_MinCost(
 			f2r[facility][land]['quantity'] = cp.Variable()
 			# and again grab distance for associated emis/cost
 			dist = Distance(floc,rloc)
-			f2r[facility][land]['trans_emis'] = dist*detour_factor*kilometres_to_emissions
 			f2r[facility][land]['trans_cost'] = dist*detour_factor*f2r_trans_cost
     
     ############################################################       
@@ -543,23 +541,22 @@ def RunModel_MinCost(
 		print(" >  c2f cost for muni: ", muni) if (DEBUG == True) else ()
 		for facility in facilities['SwisNo']:
 			# print("c2f distance cost for facility: ", facility)
-			x    = c2f[muni][facility]
-			obj += x['quantity']*x['trans_cost'] # original cost opt 
-			# obj += a * x['quantity']*x['trans_cost'] # new pareto analysis
+			x = c2f[muni][facility]
+			if x['quantity'] is not None:
+                v = x['quantity']
+            else:
+                v = 0.0
+            obj += v *x['trans_cost'] # original cost opt 
 
 
 	for facility in facilities['SwisNo']:
 		print(" >  f2r  cost for facility and land: ", facility) if (DEBUG == True) else ()
 		for land in landuse['OBJECTID']:
 			x = f2r[facility][land]
-            
 			# project_cost due to transport of compost from facility to landuse
 			obj += x['quantity'] * x['trans_cost'] # original cost opt
-			# obj += a * x['quantity'] * x['trans_cost'] # new pareto analysis
-
 			# project_cost due to application of compost by manure spreader
 			obj += x['quantity'] * spreader_cost # original cost opt
-			# obj += a * x['quantity'] * spreader_cost # new pareto analysis
 
 
 	# EMISIONS FROM C TO F (at at Facility)
@@ -656,7 +653,7 @@ def RunModel_MinCost(
 
 	return c2f_values, f2r_values #, land_app, cost_millions, CO2mit, abatement_cost
 
-# c, f = RunModel_MinCost()
+c, f = RunModel_MinCost()
 
 
 ############################################################
@@ -670,8 +667,8 @@ def RunModel_MinEmis(
 	msw = msw, 
 	landuse = rangelands,
 	facilities = facilities,
-    # seq_factors = grazed_rates, 
-    seq_f = -108,
+    seq_factors = grazed_rates, 
+#     seq_f = -108,
     feedstock = 'food_and_green',
 
     # scaling parameters 
@@ -815,9 +812,9 @@ def RunModel_MinEmis(
 			
 
 			# pull county specific sequestration rate!!
-			# county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
-			# print("COUNTYY: ", county)
-			# seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
+			county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
+			print("COUNTYY: ", county)
+			seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
 			
 			# print("SEQ F: ", seq_f)
 
@@ -964,7 +961,7 @@ def RunModel_MinEmis(
 	return c2f_values, f2r_values #, land_app, cost_millions, CO2mit, abatement_cost
 
 
-c, f = RunModel_MinEmis()
+# c, f = RunModel_MinEmis()
 
 
 
