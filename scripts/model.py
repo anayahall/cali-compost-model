@@ -445,7 +445,8 @@ def RunModel_MinCost(
 	msw = msw, 
 	landuse = rangelands,
 	facilities = facilities,
-    # seq_factors = grazed_rates, alt is seq_f = -108
+    # seq_factors = grazed_rates, alt is 
+    seq_f = -108,
     feedstock = 'food_and_green',
 
     # scaling parameters 
@@ -461,7 +462,10 @@ def RunModel_MinCost(
 	# cost parameters
     c2f_trans_cost = 0.412, #$/m3-km # transit costs (alt is 1.8)
 	f2r_trans_cost = .206, #$/m3-km # transit costs
-	spreader_cost = 5.8 #$/m3 # cost to spread
+	spreader_cost = 5.8, #$/m3 # cost to spread
+    
+    #additional constraints
+    emissions_constraint = 1
     
 	):  # minimizing on cost when a is 1, and on ghg when a is 0
     
@@ -514,6 +518,7 @@ def RunModel_MinCost(
 			c2f[muni][facility]['quantity'] = cp.Variable()
 			# since already grabbing this relationship, might as well store distance and associated emis/cost
 			dist = Distance(cloc,floc)
+			c2f[muni][facility]['trans_emis'] = dist*detour_factor*kilometres_to_emissions
 			c2f[muni][facility]['trans_cost'] = dist*detour_factor*c2f_trans_cost
 
 	# amount of compost to send to rangeland 
@@ -528,6 +533,7 @@ def RunModel_MinCost(
 			f2r[facility][land]['quantity'] = cp.Variable()
 			# and again grab distance for associated emis/cost
 			dist = Distance(floc,rloc)
+			f2r[facility][land]['trans_emis'] = dist*detour_factor*kilometres_to_emissions
 			f2r[facility][land]['trans_cost'] = dist*detour_factor*f2r_trans_cost
     
     ############################################################       
@@ -553,15 +559,15 @@ def RunModel_MinCost(
 		print(" >  f2r  cost for facility and land: ", facility) if (DEBUG == True) else ()
 		for land in landuse['OBJECTID']:
 			x = f2r[facility][land]
+			if x['quantity'] is not None:
+				v = x['quantity']
+			else:
+				v = 0.0
 			# project_cost due to transport of compost from facility to landuse
 			obj += x['quantity'] * x['trans_cost'] # original cost opt
 			# project_cost due to application of compost by manure spreader
 			obj += x['quantity'] * spreader_cost # original cost opt
 
-
-	# EMISIONS FROM C TO F (at at Facility)
-    # Emissions: collection, processing, avoided landfill
-    
 	
             
 	############################################################
@@ -621,6 +627,62 @@ def RunModel_MinCost(
 			temp_out += x['quantity']	# sum of output from facilty to land
 		cons += [temp_out == waste_to_compost*temp_in]
 
+    # Emissions: collection, processing, avoided landfill
+	total_emis = 0
+
+	# EMISIONS FROM C TO F (at at Facility)
+	count = 0 # for keeping track of the municipality count
+	# emissions due to waste remaining in muni
+	for muni in msw['muni_ID']:
+		count += 1
+		print("muni ID: ", muni, " ## ", count,  "-- (AVOIDED) LANDFILL EMISSIONS") if (DEBUG == True) else ()
+		county_disposal = Fetch(msw, 'muni_ID', muni, 'disposal')
+		temp = 0
+		for facility in facilities['SwisNo']:
+			print("c2f - facility: ", facility) if (DEBUG == True) else ()
+			#grab quantity and sum for each county
+			x    = c2f[muni][facility]
+			if x['quantity'].value is not None:
+				v = x['quantity'].value  
+			# if x['quantity'] is not None:
+			# 	v = x['quantity']  
+			else:
+				v = 0.0
+			temp += v
+			# emissions due to transport of waste from county to facility 
+			total_emis += v * x['trans_emis']
+			# emissions due to processing compost at facility
+			total_emis += v * process_emis
+	#    temp = sum([c2f[muni][facility]['quantity'] for facilities in facilities['SwisNo']]) #Does the same thing
+		total_emis += landfill_ef*(-temp) #AVOIDED Landfill emissions
+		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
+
+	print("OBJ SIZE (C2f): ", sys.getsizeof(obj)) if (DEBUG == True) else ()
+
+	# EMISSIONS FROM F TO R (and at Rangeland)
+	for facility in facilities['SwisNo']:
+		print("SW facility: ", facility, "--to LAND") if (DEBUG == True) else ()
+		for land in landuse['OBJECTID']:
+			print('f2r - land #: ', land) if (DEBUG == True) else ()
+			x = f2r[facility][land]
+			if x['quantity'].value is not None:
+				applied_amount = x['quantity'].value  
+			# if x['quantity'] is not None:
+			# 	applied_amount = x['quantity']  
+			else:
+				applied_amount = 0.0 
+			# emissions due to transport of compost from facility to landuse
+			total_emis += x['trans_emis']* applied_amount
+			# emissions due to application of compost by manure spreader
+			total_emis += spreader_ef * applied_amount
+			# sequestration of applied compost
+			total_emis += seq_f * applied_amount
+
+
+# 	if emissions_constraint != None:
+	cons += [total_emis <= 0]
+
+
     ############################################################
 	print("defining problem")
 
@@ -633,7 +695,7 @@ def RunModel_MinCost(
 
 	# SOLVE MODEL TO GET FINAL VALUE (which will be in terms of kg of CO2)
     #solver = cp.GUROBI, <- can't solve....
-	val = prob.solve(verbose = True)
+	val = prob.solve(solver = cp.GUROBI, verbose = True)
  
 	now = datetime.datetime.now()
 	print("TIME ELAPSED SOLVING: ", str(now - tzero))
