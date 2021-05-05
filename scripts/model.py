@@ -680,7 +680,7 @@ def RunModel_MinCost(
 
 
 # 	if emissions_constraint != None:
-	cons += [total_emis <= 0]
+# 	cons += [total_emis <= 0]
 
 
     ############################################################
@@ -875,7 +875,7 @@ def RunModel_MinEmis(
 
 			# pull county specific sequestration rate!!
 			county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
-			print("COUNTYY: ", county)
+# 			print("COUNTYY: ", county)
 			seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
 			
 			# print("SEQ F: ", seq_f)
