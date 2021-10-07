@@ -695,7 +695,7 @@ def RunModel_MinCost(
 
 	# SOLVE MODEL TO GET FINAL VALUE (which will be in terms of kg of CO2)
     #solver = cp.GUROBI, <- can't solve....
-	val = prob.solve(solver = cp.GUROBI, verbose = True)
+	val = prob.solve(verbose = True)
  
 	now = datetime.datetime.now()
 	print("TIME ELAPSED SOLVING: ", str(now - tzero))
@@ -715,7 +715,7 @@ def RunModel_MinCost(
 
 	return c2f_values, f2r_values #, land_app, cost_millions, CO2mit, abatement_cost
 
-c, f = RunModel_MinCost()
+# c, f = RunModel_MinCost()
 
 
 ############################################################
@@ -768,9 +768,9 @@ def RunModel_MinEmis(
 		msw_temp['subtype'].replace({'MSW_green':'food_and_green'}, inplace = True)
 		msw = msw_temp.copy()
 
-		for m in msw['muni_ID']:
-			d = Fetch(msw, 'muni_ID', m, 'disposal')
-			print("DISPOSAL: ", d)
+		# for m in msw['muni_ID']:
+		# 	d = Fetch(msw, 'muni_ID', m, 'disposal')
+		# 	print("DISPOSAL: ", d)
 
 	elif feedstock == 'food':
 		msw_temp = msw.copy()
@@ -1023,7 +1023,7 @@ def RunModel_MinEmis(
 	return c2f_values, f2r_values #, land_app, cost_millions, CO2mit, abatement_cost
 
 
-# c, f = RunModel_MinEmis()
+c, f = RunModel_MinEmis()
 
 
 

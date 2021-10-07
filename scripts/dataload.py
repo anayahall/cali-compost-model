@@ -142,53 +142,53 @@ print("facility data loaded") if (DEBUG == True) else ()
 # RANGELANDS (ORIGINAL FMMP DATAFILE)
 ############################################################
 # Import rangelands
-# # print("about to import rangelands") if (DEBUG == True) else ()
-# rangelands = gpd.read_file(opj(DATA_DIR, "rangelands/FMMP/grazingland_county.shp"))
+# print("about to import rangelands") if (DEBUG == True) else ()
+rangelands = gpd.read_file(opj(DATA_DIR, "rangelands/FMMP/grazingland_county.shp"))
+rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
+
+# Fix county names in RANGELANDS! 
+countyIDs = pd.read_csv(opj(DATA_DIR, "counties/CA_FIPS_wcode.csv"), 
+	names = ['FIPS', 'COUNTY', 'State', 'county_nam'])
+countyIDs = countyIDs[['COUNTY', 'county_nam']]
+rangelands = pd.merge(rangelands, countyIDs, on = 'county_nam')
+
+# convert area capacity into volume capacity
+rangelands['area_ha'] = rangelands['Shape_Area']/10000 # convert area in m2 to hectares
+rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
+# rangelands['capacity_ton'] = rangelands['area_ha'] * 37.1 # also calculated for tons unit frameworkcropl
+
+# estimate centroid
+# rangelands_proj = rangelands.to_crs(epsg=3310) # change to projected crs for getting centroid
+rangelands['centroid'] = rangelands['geometry'].centroid 
+
 # rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
-
-# # Fix county names in RANGELANDS! 
-# countyIDs = pd.read_csv(opj(DATA_DIR, "counties/CA_FIPS_wcode.csv"), 
-# 	names = ['FIPS', 'COUNTY', 'State', 'county_nam'])
-# countyIDs = countyIDs[['COUNTY', 'county_nam']]
-# rangelands = pd.merge(rangelands, countyIDs, on = 'county_nam')
-
-# # convert area capacity into volume capacity
-# rangelands['area_ha'] = rangelands['Shape_Area']/10000 # convert area in m2 to hectares
-# rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
-# # rangelands['capacity_ton'] = rangelands['area_ha'] * 37.1 # also calculated for tons unit frameworkcropl
-
-# # estimate centroid
-# rangelands = rangelands.to_crs(epsg=3310) # change to projected crs for getting centroid
-# rangelands['centroid'] = rangelands['geometry'].centroid 
-
-# rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
-# print("rangelands loaded") if (DEBUG == True) else ()
+print("rangelands loaded") if (DEBUG == True) else ()
 
 
 ##############################################################
 # NEW RANGELAND DATA #(CAL CONSERVATION DEPT)
 # ##############################################################
-# # UPDATE 08032020 -- bring in new rangelands (and keep naming convention)
-print("bringing in second rangeland data file") if (DEBUG == True) else ()
-rangelands = gpd.read_file(opj(DATA_DIR, "rangelands/DOC/ds553_counties.shp"))
-rangelands = rangelands.to_crs(epsg=4326)
+# # # UPDATE 08032020 -- bring in new rangelands (and keep naming convention)
+# print("bringing in second rangeland data file") if (DEBUG == True) else ()
+# rangelands = gpd.read_file(opj(DATA_DIR, "rangelands/DOC/ds553_counties.shp"))
+# rangelands = rangelands.to_crs(epsg=4326)
 
-rangelands['OBJECTID'] = rangelands.index
-rangelands['COUNTY'] = rangelands['NAME']
+# rangelands['OBJECTID'] = rangelands.index
+# rangelands['COUNTY'] = rangelands['NAME']
 
-# Each planning unit falls into one of 3 groups.
-# 0. Not included in priority areas.
-# 1. Important for rangeland goals - selected 3-7 times of 10.
-# 2. Critical for rangeland goals- selected 8-10 times
+# # Each planning unit falls into one of 3 groups.
+# # 0. Not included in priority areas.
+# # 1. Important for rangeland goals - selected 3-7 times of 10.
+# # 2. Critical for rangeland goals- selected 8-10 times
 
 
-# convert area capacity into volume capacity
-rangelands['area_ha'] = rangelands['Shape_area']/10000 # convert area in m2 to hectares
-rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
-# # estimate centroid
-# rangelands_temp = rangelands.to_crs(epsg=3310) # change to projected crs for getting centroid
-rangelands['centroid'] = rangelands['geometry'].centroid 
-# rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
+# # convert area capacity into volume capacity
+# rangelands['area_ha'] = rangelands['Shape_area']/10000 # convert area in m2 to hectares
+# rangelands['capacity_m3'] = rangelands['area_ha'] * 63.5 # use this metric for m3 unit framework
+# # # estimate centroid
+# # rangelands_temp = rangelands.to_crs(epsg=3310) # change to projected crs for getting centroid
+# rangelands['centroid'] = rangelands['geometry'].centroid 
+# # rangelands = rangelands.to_crs(epsg=4326) # make sure this is read in degrees (WGS84)
 
 
 
@@ -260,7 +260,7 @@ grazed_rates['seq_f'] = grazed_rates['GHG Emissions'] / 0.404686 / 63.5 / 0.001
 #############################################################
 if SUBSET == True: 
 
-	subset_size = 40
+	subset_size = 60
 
 	print("* create SUBSET of data ( N=", subset_size, ") for testing locally *" )
 	

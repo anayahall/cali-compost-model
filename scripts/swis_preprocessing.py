@@ -29,6 +29,8 @@ from geopandas import GeoSeries, GeoDataFrame
 #read in compost facilities csv
 df = pd.read_csv("data/interim/swis_compost.csv")
 
+raise Exception("pause here to run through and check")
+
 df.County.value_counts(dropna=False).head()
 
 

@@ -16,7 +16,7 @@ import geopandas as gpd
 import scipy as sp
 import pickle
 import time
-import yagmail
+# import yagmail
 
 
 ############################################################
