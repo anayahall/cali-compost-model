@@ -238,7 +238,7 @@ value =  'GHG Emissions'
 # # # for county in annual_rates['County']:
 # # # 	rate = Fetch(annual_rates, 'County', county, value)
 
-print("reading grazed")
+print("reading grazed seq rates")
 grazed_rates = pd.read_csv(opj(DATA_DIR, 
 	grazed_file))
 grazed_rates['seq_f'] = grazed_rates['GHG Emissions'] / 0.404686 / 63.5 / 0.001
@@ -247,7 +247,7 @@ grazed_rates['seq_f'] = grazed_rates['GHG Emissions'] / 0.404686 / 63.5 / 0.001
 # 	rate = Fetch(grazed_rates, 'County', county, value)
 # 	print(rate)
 
-# TODO - change rates in the file here, then load into the compostLP fucntions
+#  - change rates in the file here, then load into the compostLP fucntions
 
 # the rates above are MTCO2e/acre/year
 # want to get to kgCO2e/m3/year
@@ -273,4 +273,5 @@ if SUBSET == True:
 # raise Exception("data loaded - pre optimization")
 ############################################################
 
+print("all data loaded")
 
