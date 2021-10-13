@@ -260,7 +260,7 @@ grazed_rates['seq_f'] = grazed_rates['GHG Emissions'] / 0.404686 / 63.5 / 0.001
 #############################################################
 if SUBSET == True: 
 
-	subset_size = 60
+	subset_size = 20
 
 	print("* create SUBSET of data ( N=", subset_size, ") for testing locally *" )
 	

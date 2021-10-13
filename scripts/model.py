@@ -106,21 +106,25 @@ def LandApplication(
 	:param facilities swis facilities
 	:param f2r amount of compost moved from each facility to each rangeland
 	"""
+
+	total_area = 0 
 	# create empty dictionary
 	land_app = {}
+
 	for land in landuse['OBJECTID']:
 		print("Calculating land area & amount applied for land: ", land) if (DEBUG == True) else ()
 		r_string = str(land)
 		applied_volume = 0
-		area = 0
+		local_area = 0
 		land_app[r_string] = {}
 		land_app[r_string]['OBJECTID'] = r_string
 
 		# print("SEQ F: ", seq_f)
 		
 		# toggle this on to collect County info. not in the second landuse dataset
-		land_app[r_string]['COUNTY'] = Fetch(landuse, 'OBJECTID', land, 'COUNTY') #FLAG!
+		# land_app[r_string]['COUNTY'] = Fetch(landuse, 'OBJECTID', land, 'COUNTY') #FLAG!
 		for facility in facilities['SwisNo']:
+			land_app[r_string][facility] = {}
 			# print("from facility: ", facility)
 			x = f2r[facility][land]
 			if x['quantity'].value is not None:
@@ -128,11 +132,15 @@ def LandApplication(
 			else:
 				v = 0.0 
 			applied_volume += v 
-			area += int(round(applied_volume * (1/63.5)))
-		land_app[r_string]['area_treated'] = area
+			local_area += int(round(applied_volume * (1/63.5)))
+			land_app[r_string]['facility'] = facility
+			total_area += local_area
+		land_app[r_string]['area_treated'] = local_area
 		land_app[r_string]['volume'] = int(round(applied_volume))
 
-		return land_app
+		print("total area", total_area)
+
+		return land_app, total_area
 
 # ############################################################
 # ### LOAD IN DATA ###
@@ -155,12 +163,12 @@ def RunModel(
 	msw = msw, 
 	landuse = rangelands,
 	facilities = facilities,
-    seq_factors = grazed_rates, #alt is seq_f = -108
-    feedstock = 'food_and_green',
+  seq_factors = grazed_rates, #alt is seq_f = -108
+  feedstock = 'food_and_green',
 
     # scaling parameters 
-    detour_factor = 1.4,
-    capacity_multiplier = 1,
+  detour_factor = 1.4,
+  capacity_multiplier = 1,
     
     # emission factors 
 	landfill_ef = 315, #kg CO2e / m3 = avoided emissions from waste going to landfill
@@ -169,12 +177,12 @@ def RunModel(
 	process_emis = 11, # kg CO2e/ m3 = emisisons at facility from processing compost
 	waste_to_compost = 0.58, #% volume change from waste to compost
 	# cost parameters
-    c2f_trans_cost = 0.412, #$/m3-km # transit costs (alt is 1.8)
+  c2f_trans_cost = 0.412, #$/m3-km # transit costs (alt is 1.8)
 	f2r_trans_cost = .206, #$/m3-km # transit costs
 	spreader_cost = 5.8, #$/m3 # cost to spread
     
     # pareto tradeoff
-    a = 1):  # minimizing on cost when a is 1, and on ghg when a is 0
+    a = cp.Parameter(nonneg=True)): # minimizing on cost when a is 1, and on ghg when a is 0
     
     # something about food/green waste here? or else earlier !
 
@@ -449,22 +457,30 @@ def RunModel(
 
 	# SOLVE MODEL TO GET FINAL VALUE (which will be in terms of kg of CO2)
     #solver = cp.GUROBI, <- can't solve....
-	val = prob.solve(verbose = True)
+	alpha_vals = np.linspace(0., 1., num=3)
+	for alpha in alpha_vals:
+		print("*********************************************")
+		print(" >> ALPHA VAL = {0}".format(alpha))
+		a.value = alpha
+		val = prob.solve(verbose = True)
  
-	now = datetime.datetime.now()
-	print("TIME ELAPSED SOLVING: ", str(now - tzero))
-	print("*********************************************")
+		now = datetime.datetime.now()
+		print("TIME ELAPSED SOLVING: ", str(now - tzero))
+		print("*********************************************")
 
+		land_app_dict, area_treated = LandApplication(landuse = rangelands, facilities = facilities, f2r = f2r)
 
-	############################################################
-	print("VAL: ", val) 
-	# cost_millions = (project_cost/(10**6))    
-	# print("TOTAL COST (Millions $) : ", cost_millions)
-	# print("TOTAL EMISSIONS (kg CO2e) : ", total_emis)
-	# print("*********************************************")
-	# print("CO2 Mitigated (MMt CO2eq) = {0}".format(CO2mit))
-    
-	c2f_values, f2r_values = SaveModelVars(c2f, f2r)
+		############################################################
+		print("VAL: (sort of meaningless now, just checking for solve) ", val) 
+		# cost_millions = (project_cost/(10**6))    
+		# print("TOTAL COST (Millions $) : ", cost_millions)
+		# print("TOTAL EMISSIONS (kg CO2e) : ", total_emis)
+		# print("*********************************************")
+		# print("CO2 Mitigated (MMt CO2eq) = {0}".format(CO2mit))
+		print("Total_area (acres) = {}".format(area_treated))
+	    
+		c2f_values, f2r_values = SaveModelVars(c2f, f2r)
+		print("*********************************************")
 
 
 	return c2f_values, f2r_values #, land_app, cost_millions, CO2mit, abatement_cost
@@ -483,12 +499,12 @@ def RunModel_MinCost(
 	landuse = rangelands,
 	facilities = facilities,
     # seq_factors = grazed_rates, alt is 
-    seq_f = -108,
-    feedstock = 'food_and_green',
+  seq_f = -108,
+  feedstock = 'food_and_green',
 
     # scaling parameters 
-    detour_factor = 1.4,
-    capacity_multiplier = 1,
+  detour_factor = 1.4,
+  capacity_multiplier = 1,
     
     # emission factors 
 	landfill_ef = 315, #kg CO2e / m3 = avoided emissions from waste going to landfill
@@ -497,12 +513,12 @@ def RunModel_MinCost(
 	process_emis = 11, # kg CO2e/ m3 = emisisons at facility from processing compost
 	waste_to_compost = 0.58, #% volume change from waste to compost
 	# cost parameters
-    c2f_trans_cost = 0.412, #$/m3-km # transit costs (alt is 1.8)
+  c2f_trans_cost = 0.412, #$/m3-km # transit costs (alt is 1.8)
 	f2r_trans_cost = .206, #$/m3-km # transit costs
 	spreader_cost = 5.8, #$/m3 # cost to spread
     
     #additional constraints
-    emissions_constraint = 1
+  g = cp.Parameter(nonneg = True)
     
 	):  # minimizing on cost when a is 1, and on ghg when a is 0
     
@@ -715,9 +731,8 @@ def RunModel_MinCost(
 			# sequestration of applied compost
 			total_emis += seq_f * applied_amount
 
-
-	# if emissions_constraint != None:
-	# cons += [total_emis <= 0]
+	# Trying emissions constraints to force some cost!		
+	cons += [total_emis <= gamma]
 
 
     ############################################################
@@ -732,23 +747,31 @@ def RunModel_MinCost(
 
 	# SOLVE MODEL TO GET FINAL VALUE (which will be in terms of kg of CO2)
     #solver = cp.GUROBI,
-	val = prob.solve(solver = cp.MOSEK, verbose = True)
- 
-	now = datetime.datetime.now()
-	print("TIME ELAPSED SOLVING: ", str(now - tzero))
-	print("*********************************************")
+	gamma_vals = np.arange(0., 0.25, 0.1)
+	for gamma in gamma_vals:
+		print("*********************************************")
+		print(" >> GAMMA (EMISSIONS CONSTRAINT) VAL = {0}".format(gamma))
+		g.value = gamma
+		val = prob.solve(solver = cp.MOSEK, verbose = True)
+	 
+		now = datetime.datetime.now()
+		print("TIME ELAPSED SOLVING: ", str(now - tzero))
+		print("*********************************************")
 
+		land_app_dict, area_treated = LandApplication(landuse = rangelands, facilities = facilities, f2r = f2r)
 
-	############################################################
-	print("VAL: ", val) 
-	print("TOTAL EMIS: ", total_emis)
-	cost_millions = (val/(10**6))    
-	print("TOTAL COST (Millions $) : ", cost_millions)
-	# print("TOTAL EMISSIONS (kg CO2e) : ", total_emis)
-	# print("*********************************************")
-	# print("CO2 Mitigated (MMt CO2eq) = {0}".format(CO2mit))
-    
-	c2f_values, f2r_values = SaveModelVars(c2f, f2r)
+		print("AREA TREATED", area_treated)
+
+		############################################################
+		print("VAL: ", val) 
+		print("TOTAL EMIS: ", total_emis)
+		cost_millions = (val/(10**6))    
+		print("TOTAL COST (Millions $) : ", cost_millions)
+		# print("TOTAL EMISSIONS (kg CO2e) : ", total_emis)
+		# print("*********************************************")
+		# print("CO2 Mitigated (MMt CO2eq) = {0}".format(CO2mit))
+	    
+		c2f_values, f2r_values = SaveModelVars(c2f, f2r)
 
 
 	return c2f_values, f2r_values #, land_app, cost_millions, CO2mit, abatement_cost
@@ -1074,7 +1097,9 @@ def RunModel_MinEmis(
 			# project_cost due to application of compost by manure spreader
 			project_cost += x['quantity'].value * spreader_cost 
 
-	land_app = LandApplication(landuse = rangelands, facilities = facilities, f2r = f2r)
+	land_app_dict, area_treated = LandApplication(landuse = rangelands, facilities = facilities, f2r = f2r)
+
+	print("AREA TREATED", area_treated)
 
 	############################################################
 	# print("VAL: ", val) 
@@ -1084,13 +1109,16 @@ def RunModel_MinEmis(
 	CO2mit = -val/(10**9)
 	# print("*********************************************")
 	print("CO2 Mitigated (MMt CO2eq) = {0}".format(CO2mit))
+
+	print("PRICE ($/tCO2) = {0}".format((-val/project_cost)*1000))
+	print("PRICE ($/acre) = {}".format(project_cost/area_treated))
     
 	c2f_values, f2r_values = SaveModelVars(c2f, f2r)
 
-	return c2f_values, f2r_values, land_app, #cost_millions, CO2mit, abatement_cost
+	return c2f_values, f2r_values, land_app_dict, #cost_millions, CO2mit, abatement_cost
 
 
-c, f = RunModel_MinEmis()
+c, f, l = RunModel_MinEmis()
 
 
 
