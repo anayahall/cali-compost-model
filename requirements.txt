@@ -1,46 +1,26 @@
-attrs==20.3.0
-certifi==2020.12.5
-click==7.1.2
-click-plugins==1.1.1
-cligj==0.7.1
-cvxpy==1.1.7
-ecos==2.0.7.post1
-Fiona==1.8.18
-geopandas==0.8.1
-munch==2.5.0
-numpy==1.19.5
-osqp==0.6.2
-pandas==1.2.0
-pyproj==3.0.0.post1
-python-dateutil==2.8.1
-python3-nersc-customs==0.2.0
-python3-nersc-modster==0.3.0
-python3-nersc-sitecustomize==0.2.0
-python3-nerscjson==0.9
-pytz==2020.5
-qdldl==0.1.5.post0
-scipy==1.6.0
-scs==2.1.2
-Shapely==1.7.1
-six==1.15.0
 attrs @ file:///tmp/build/80754af9/attrs_1604765588209/work
-certifi==2020.12.5
+certifi==2021.10.8
 click==7.1.2
 click-plugins==1.1.1
 cligj==0.7.1
 cvxpy==1.1.12
+cycler==0.10.0
 ecos @ file:///Users/runner/miniforge3/conda-bld/ecos_1604252831233/work
 Fiona==1.8.13.post1
 future @ file:///Users/runner/miniforge3/conda-bld/future_1605203679397/work
 GDAL==3.0.2
 geopandas @ file:///tmp/build/80754af9/geopandas_1594937497867/work
+kiwisolver @ file:///opt/concourse/worker/volumes/live/1e6d28e8-da14-4365-7344-567a05db7efc/volume/kiwisolver_1612282399491/work
+matplotlib @ file:///Users/runner/miniforge3/conda-bld/matplotlib-base_1594091703837/work
 mkl-fft==1.2.0
 mkl-random==1.1.1
 mkl-service==2.3.0
+Mosek==9.3.7
 munch==2.5.0
 numpy @ file:///opt/concourse/worker/volumes/live/a1b5ea96-b05c-40ba-5dfb-4542ece1c186/volume/numpy_and_numpy_base_1603491228242/work
 osqp==0.6.1
 pandas==1.1.5
+pyparsing==2.4.7
 pyproj==2.6.1.post1
 python-dateutil==2.8.1
 pytz @ file:///tmp/build/80754af9/pytz_1606604771399/work
@@ -49,3 +29,4 @@ scipy==1.2.1
 scs @ file:///Users/runner/miniforge3/conda-bld/scs_1604253585400/work
 Shapely @ file:///opt/concourse/worker/volumes/live/90b213a3-40f8-45c1-480b-3008028b4f18/volume/shapely_1599817167930/work
 six @ file:///opt/concourse/worker/volumes/live/f983ba11-c9fe-4dff-7ce7-d89b95b09771/volume/six_1605205318156/work
+tornado @ file:///Users/runner/miniforge3/conda-bld/tornado_1625489080309/work
