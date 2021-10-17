@@ -178,7 +178,7 @@ def TotalEmissions(
 			# emissions due to processing compost at facility
 			total_emis += v * process_emis
 	   # temp = sum([c2f[muni][facility]['quantity'] for facilities in facilities['SwisNo']]) #Does the same thing
-	total_emis += 315.0*(-temp) #AVOIDED Landfill emissions
+	total_emis += -315.0*(temp) #AVOIDED Landfill emissions
 		# obj += landfill_ef*(county_disposal - temp) #PENALTY for the waste stranded in county
 
 	# EMISSIONS FROM F TO R (and at Rangeland)
@@ -304,7 +304,7 @@ def RunModel(
     # pareto tradeoff
   a = cp.Parameter(nonneg=True)): # minimizing on cost when a is 1, and on ghg when a is 0
     
-	m=3
+	m=1
   # something about food/green waste here? or else earlier !
 
 	print("-- setting feedstock and disposal")
@@ -443,56 +443,24 @@ def RunModel(
 
 	# EMISSIONS FROM F TO R (and at Rangeland)
     # Emissions: hauling, spreading, sequestration
-	# for facility in facilities['SwisNo']:
-	# 	print("SW facility: ", facility, "--to LAND") if (DEBUG == True) else ()
-	# 	for land in landuse['OBJECTID']:
-	# 		print('f2r - land #: ', land) if (DEBUG == True) else ()
+	for facility in facilities['SwisNo']:
+		print("SW facility: ", facility, "--to LAND") if (DEBUG == True) else ()
+		for land in landuse['OBJECTID']:
+			print('f2r - land #: ', land) if (DEBUG == True) else ()
 			
 
-	# 		# pull county specific sequestration rate!!
-	# 		# county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
-	# 		# print("COUNTYY: ", county)
-	# 		# seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
+			# pull county specific sequestration rate!!
+			county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
+			# print("COUNTYY: ", county)
+			seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
 			
-	# 		# print("SEQ F: ", seq_f)
+			# print("SEQ F: ", seq_f)
 
-	# 		seq_f = 108
+			# seq_f = 108
 
-	# 		x = f2r[facility][land]
-	# 		# if x['quantity'].value is not None:
-	# 		# 	applied_amount = x['quantity'].value  
-	# 		if x['quantity'] is not None:
-	# 			applied_amount = x['quantity']  
-	# 		else:
-	# 			applied_amount = 0.0 
-                
-	# 		# emissions due to transport of compost from facility to landuse
-	# 		# total_emis += x['trans_emis']* applied_amount # # for use as constraint in cost opt
-	# 		obj += (1-a) * x['trans_emis']* applied_amount # pareto analysis
-
-	# 		# emissions due to application of compost by manure spreader
-	# 		# total_emis += spreader_ef * applied_amount # # for use as constraint in cost opt
-	# 		obj += (1-a) * spreader_ef * applied_amount # pareto analysis
-
-	# 		# sequestration of applied compost
-	# 		# total_emis += seq_f * applied_amount # # for use as constraint in cost opt
-	# 		obj += (1-a) * (-seq_f) * applied_amount # pareto analysis
-            
-            
-    ### REDO OTHER WAY?
-
-	for land in landuse['OBJECTID']:
-		print("LAND #", land) if (DEBUG == True) else ()
-        # pull county specific sequestration rate!!
-		county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
-		# print("COUNTYYYYYYYYYYYYYY: ", county)
-		seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
-		# print("SEQ F: ", seq_f)
-		# seq_f = 108
-
-		for facility in facilities['SwisNo']:
-			print('SW facility', facility) if (DEBUG == True) else ()
 			x = f2r[facility][land]
+			# if x['quantity'].value is not None:
+			# 	applied_amount = x['quantity'].value  
 			if x['quantity'] is not None:
 				applied_amount = x['quantity']  
 			else:
@@ -509,6 +477,38 @@ def RunModel(
 			# sequestration of applied compost
 			# total_emis += seq_f * applied_amount # # for use as constraint in cost opt
 			obj += (1-a) * (-seq_f) * applied_amount # pareto analysis
+            
+            
+    ### REDO OTHER WAY?
+
+	# for land in landuse['OBJECTID']:
+	# 	print("LAND #", land) if (DEBUG == True) else ()
+ #        # pull county specific sequestration rate!!
+	# 	county = Fetch(landuse, 'OBJECTID' , land, 'COUNTY')
+	# 	# print("COUNTYYYYYYYYYYYYYY: ", county)
+	# 	seq_f = Fetch(seq_factors, 'County', county, 'seq_f')
+	# 	# print("SEQ F: ", seq_f)
+	# 	# seq_f = 108
+
+	# 	for facility in facilities['SwisNo']:
+	# 		print('SW facility', facility) if (DEBUG == True) else ()
+	# 		x = f2r[facility][land]
+	# 		if x['quantity'] is not None:
+	# 			applied_amount = x['quantity']  
+	# 		else:
+	# 			applied_amount = 0.0 
+                
+	# 		# emissions due to transport of compost from facility to landuse
+	# 		# total_emis += x['trans_emis']* applied_amount # # for use as constraint in cost opt
+	# 		obj += (1-a) * x['trans_emis']* applied_amount # pareto analysis
+
+	# 		# emissions due to application of compost by manure spreader
+	# 		# total_emis += spreader_ef * applied_amount # # for use as constraint in cost opt
+	# 		obj += (1-a) * spreader_ef * applied_amount # pareto analysis
+
+	# 		# sequestration of applied compost
+	# 		# total_emis += seq_f * applied_amount # # for use as constraint in cost opt
+	# 		obj += (1-a) * (-seq_f) * applied_amount # pareto analysis
             
 	############################################################
 	#Constraints
@@ -621,21 +621,39 @@ def RunModel(
 	  # save output dicts!  
 		c2f_values, f2r_values = SaveModelVars(c2f, f2r)
 		print("*********************************************")
-		print("starting to PLOT?!?!?!!")
+	
+	# print("starting to PLOT?!?!?!!")
 
-		plt.rc('text', usetex=True)
-		plt.rc('font', family='serif')
+	# # plt.rc('text', usetex=True)
+	# plt.rc('font', family='serif')
 
-		plt.figure(figsize=(6,6))
-		for i in range(m):
-			plt.plot(alpha_vals, [ti[i] for ti in ton_values])
-		plt.xlabel(r'\alpha', fontsize=16)
-		plt.ylabel(r'$/tCO2', fontsize=16)
-		plt.title('TEST PLOT', fontsize=16)
+	# plt.figure(figsize=(6,6))
+	# plt.plot(a,t[0:])
+	# 	# a[i], t[i][0]
+	# plt.xlabel(r'\alpha', fontsize=16)
+	# plt.ylabel(r'$/tCO2', fontsize=16)
+	# plt.title('TEST PLOT', fontsize=16)
+	# plt.show()
 
-	return c2f_values, f2r_values #, land_app, cost_millions, CO2mit, abatement_cost
+	# # print(alpha_vals)
+	# # print(ton_values)
 
-c, f = RunModel()
+	return c2f_values, f2r_values, alpha_vals, ton_values #, land_app, cost_millions, CO2mit, abatement_cost
+
+c, f , a, t, = RunModel()
+
+# print("starting to PLOT!!!")
+
+# # plt.rc('text', usetex=True)
+# plt.rc('font', family='serif')
+
+# plt.figure(figsize=(6,6))
+# plt.plot(a,t[0:],marker='*')
+# 	# a[i], t[i][0]
+# plt.xlabel('Incresing Cost Weighting In Objective Function', fontsize=16)
+# plt.ylabel(r'$/tCO2', fontsize=16)
+# plt.title('Pareto Frontier of Price per Ton CO2', fontsize=16)
+# plt.show()
 
 ############################################################
 ############################################################
