@@ -70,44 +70,47 @@ def Fetch(df, key_col, key, value):
 
 ##### Municipal Solid Waste (points) #####
 print("about to load MSW points") if (DEBUG == True) else ()
-msw_shapefile = "msw_2020/msw_2020.shp"
+msw_shapefile = "msw_2020_v2/msw_2020.shp"
 
 msw = gpd.read_file(opj(DATA_DIR,
 				  msw_shapefile))
+msw.rename(columns = {'COUNTY' : 'muni_ID'}, inplace=True)
 
-# filter to just keep food and green waste (subject of regulations)
-msw = msw[(msw['subtype'] == "MSWfd_wet_dryad_wetad") | (msw['subtype'] == "MSWgn_dry_dryad")]
+# raise Exception('msw loaded')
 
-# MSW DATA NOTES: 
-# fog = Fats, Oils, Grease; lb = lumber; cd = cardboard; fd = food;
-# pp = paper, gn = green; ot = Other ; suffix describes what the 
-# waste is deemed suitable for
+# # filter to just keep food and green waste (subject of regulations)
+# msw = msw[(msw['subtype'] == "MSWfd_wet_dryad_wetad") | (msw['subtype'] == "MSWgn_dry_dryad")]
 
-# rename categories to be more intuitive
-msw['subtype'].replace({'MSWfd_wet_dryad_wetad': 'MSW_food', 
-						'MSWgn_dry_dryad': 'MSW_green'}, inplace = True)
+# # MSW DATA NOTES: 
+# # fog = Fats, Oils, Grease; lb = lumber; cd = cardboard; fd = food;
+# # pp = paper, gn = green; ot = Other ; suffix describes what the 
+# # waste is deemed suitable for
+
+# # rename categories to be more intuitive
+# msw['subtype'].replace({'MSWfd_wet_dryad_wetad': 'MSW_food', 
+# 						'MSWgn_dry_dryad': 'MSW_green'}, inplace = True)
 
 # toggle for using county levels
-if CENSUSTRACT == False:
-	print("RUNNING ON COUNTIES (not census tracts)")
-	# group by County and subtype
-	grouped = msw.groupby(['County', 'subtype'], as_index=False).sum()
+# if CENSUSTRACT == False:
+# 	print("RUNNING ON COUNTIES (not census tracts)")
+# 	# group by County and subtype
+# 	grouped = msw.groupby(['County', 'subtype'], as_index=False).sum()
 
-	# NEW COUNTY SHAPE
-	counties = pd.read_csv(opj(DATA_DIR, 
-				"counties/CenPop2010_Mean_CO06.txt")) # NEW - population weighted means!
-	# rename lat and lon for easier plotting
-	counties.rename(columns = {'LATITUDE': 'lat', 'LONGITUDE': 'lon', 'COUNAME': 'County'}, inplace=True)
+# 	# NEW COUNTY SHAPE
+# 	counties = pd.read_csv(opj(DATA_DIR, 
+# 				"counties/CenPop2010_Mean_CO06.txt")) # NEW - population weighted means!
+# 	# rename lat and lon for easier plotting
+# 	counties.rename(columns = {'LATITUDE': 'lat', 'LONGITUDE': 'lon', 'COUNAME': 'County'}, inplace=True)
 
-	#merge and turn back into shapefile?
-	# join counties and grouped
-	df = grouped.merge(counties, on='County')
+# 	#merge and turn back into shapefile?
+# 	# join counties and grouped
+# 	df = grouped.merge(counties, on='County')
 
-	# back to gdf
-	msw = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.lon, df.lat))
-	msw.rename(columns = {'County' : 'muni_ID'}, inplace=True)
-else:
-	msw.rename(columns = {'ID' : 'muni_ID'}, inplace=True)
+# 	# back to gdf
+# 	msw = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.lon, df.lat))
+# 	msw.rename(columns = {'County' : 'muni_ID'}, inplace=True)
+# else:
+# 	msw.rename(columns = {'ID' : 'muni_ID'}, inplace=True)
 
 # ADJUST VALUES ## FLAG!!!!!!!!!
 print("MSW loaded - now adjust to get wt") if (DEBUG == True) else ()

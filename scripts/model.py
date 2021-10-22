@@ -318,25 +318,29 @@ def RunModel(
 		# msw_temp.loc[(msw_temp['subtype']=='MSW_food'),'wt'] = msw_temp[msw_temp['subtype'] == 'MSW_food']['wt']*(1-fw_reduction)
 		# then combine (sum) and convert to cubic meters	
 		# print('new disposal')   
-		msw_temp['disposal'] = msw_temp.groupby(['muni_ID'])['wt'].transform('sum') / (1.30795*(1/2.24))
-		msw_temp = msw_temp.drop_duplicates(subset = 'muni_ID')
-		# print('replacing')
-		msw_temp['subtype'].replace({'MSW_green':'food_and_green'}, inplace = True)
+		# msw_temp['disposal'] = msw_temp.groupby(['muni_ID'])['wet_tons'].transform('sum') / (1.30795*(1/2.24))
+		# msw_temp = msw_temp.drop_duplicates(subset = 'muni_ID')
+		# # print('replacing')
+		# msw_temp['subtype'].replace({'MSW_green':'food_and_green'}, inplace = True)
+		# msw = msw_temp.copy()
+
+		msw_temp['disposal'] = msw_temp['fg_wt']/(1.30795/2.24)
 		msw = msw_temp.copy()
 
-	elif feedstock == 'food':
-		msw_temp = msw.copy()
-		# subset just food waste and convert wet tons to cubic meters
-		msw_temp = msw_temp[(msw_temp['subtype'] == "MSW_food")]
-		# msw['disposal'] = (1-fw_reduction)* counties['disposal_wm3']
-		msw_temp['disposal'] = (1-fw_reduction)* msw_temp['wt'] / (1.30795*(1/2.24))
-		msw = msw_temp.copy()
 
-	elif feedstock == 'green':
-		msw_temp = msw.copy()
-		msw_temp = msw_temp[(msw_temp['subtype'] == "MSW_green")]
-		msw_temp['disposal'] = msw_temp['wt'] / (1.30795*(1/2.24))
-		msw = msw_temp.copy()
+	# elif feedstock == 'food':
+	# 	msw_temp = msw.copy()
+	# 	# subset just food waste and convert wet tons to cubic meters
+	# 	msw_temp = msw_temp[(msw_temp['subtype'] == "MSW_food")]
+	# 	# msw['disposal'] = (1-fw_reduction)* counties['disposal_wm3']
+	# 	msw_temp['disposal'] = (1-fw_reduction)* msw_temp['wt'] / (1.30795*(1/2.24))
+	# 	msw = msw_temp.copy()
+
+	# elif feedstock == 'green':
+	# 	msw_temp = msw.copy()
+	# 	msw_temp = msw_temp[(msw_temp['subtype'] == "MSW_green")]
+	# 	msw_temp['disposal'] = msw_temp['wt'] / (1.30795*(1/2.24))
+	# 	msw = msw_temp.copy()
 
 
 
@@ -614,6 +618,7 @@ def RunModel(
 		if alpha == 0.5: 
 		# save output dicts!  
 			c2f_values, f2r_values = SaveModelVars(c2f, f2r)
+		
 		print("*********************************************")
 
 	return c2f_values, f2r_values, alpha_vals, ton_values, acre_values, e_values, area_values #, land_app, cost_millions, CO2mit, abatement_cost

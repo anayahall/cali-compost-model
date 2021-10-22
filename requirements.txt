@@ -5,6 +5,7 @@ click-plugins==1.1.1
 cligj==0.7.1
 cvxpy==1.1.12
 cycler==0.10.0
+descartes==1.1.0
 ecos @ file:///Users/runner/miniforge3/conda-bld/ecos_1604252831233/work
 Fiona==1.8.13.post1
 future @ file:///Users/runner/miniforge3/conda-bld/future_1605203679397/work

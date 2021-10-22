@@ -72,7 +72,7 @@ for k, v in c2f_dict.items():
 		if m > 11:
 			dictlist.append(m)
 np.quantile(dictlist, [.05, .25, .5 , .75, .95])
-# array([ 55278.1, 130799. , 253441. , 377828.5, 450098.5])
+# array([  1674.8,  13181. ,  39980. ,  94910. , 208683.8])
 
 # Facilty to Rangeland
 with open('out/f2r_a05.p', 'rb') as f:
@@ -85,13 +85,16 @@ for k, v in f2r_dict.items():
 	for l,m in temp.items():
 		if m > 10:
 			dictlist.append(m)
+# array([  1155.55,  11085.25,  34252.  ,  76149.5 , 212371.2 ])
 
 
+
+# raise Exception("data loaded ; pre-plot")
 
 print("Starting Plot")
 
 # PLOT
-fig, ax = plt.subplots(figsize = (20,20))
+fig, ax = plt.subplots(figsize = (10,10))
 
 # FIRST COUNTIES
 county_shape.plot(ax = ax, color = "orange", alpha = 0.4, linewidth=1, edgecolor = "white")
@@ -161,9 +164,6 @@ for j in swis_df.index:
 				_ = ax.plot([f_lon, r_lon], [f_lat, r_lat], 'b-', alpha = 0.6, linewidth=0.75)
 			elif q > 200: 
 				_ = ax.plot([f_lon, r_lon], [f_lat, r_lat], 'b-', alpha = 0.6, linewidth=0.5)
-
-
-
 
 
 
