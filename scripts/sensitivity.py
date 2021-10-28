@@ -35,32 +35,31 @@ from model import RunModel
 # raise Exception ("pre-senstivities")
 
 ## Landfill emission factors (l)
-lvals = [182.5, 315, 472.5]
+lvals = [182.5, 472.5]
 ## Transportation emission factors (t)
-tvals = [0.185, 0.37, 0.55]
+tvals = [0.185, 0.55]
 ## Compost processing emission factors (y)
-yvals = [0.29, 0.58, 0.87]
+yvals = [0.29, 0.87]
 
 ## Collection cost (d)
-dvals = [0.026, 0.412, 0.618]
+dvals = [0.026, 0.618]
 ## Hauling cost (e)
-evals = [0.103, 0.206, 0.309]
+evals = [0.103,  0.309]
 ## Spreading cost (h)
-hvals = [2.9, 5.8, 8.7]
+hvals = [2.9, 8.7]
 
-print(" >> LANDFILL EF SENSIVITIY <<")
-for li in lvals:
-	print("Landfill EF: ", li)
-	c2f, f2r , t, acres, e, area = RunModel(landfill_ef = li, 
-		a = cp.Parameter(value=0.75))
+# print(" >> LANDFILL EF SENSIVITIY <<")
+# for li in lvals:
+# 	print("Landfill EF: ", li)
+# 	c2f, f2r , t, acres, e, area = RunModel(landfill_ef = li, a = cp.Parameter(value=0.75))
 
-print("*********************************************")
-print("*********************************************")
-print(" >> TRANSPORTATION EF SENSIVITIY <<")
-for ti in tvals:
-	print(" >>>>> Transportation EF: ", ti)
-	c2f, f2r , t, acres, e, area = RunModel(kilometres_to_emissions = ti, 
-		a = cp.Parameter(value=0.75))
+# print("*********************************************")
+# print("*********************************************")
+# print(" >> TRANSPORTATION EF SENSIVITIY <<")
+# for ti in tvals:
+# 	print(" >>>>> Transportation EF: ", ti)
+# 	c2f, f2r , t, acres, e, area = RunModel(kilometres_to_emissions = ti, 
+# 		a = cp.Parameter(value=0.75))
 
 print("*********************************************")
 print("*********************************************")

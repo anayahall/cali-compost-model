@@ -64,7 +64,7 @@ rl_lon, rl_lat = rangelands.centroid.x, rangelands.centroid.y
 # will be a dictionary 
 
 # Couty to Facility
-with open('out/c2f_a05.p', 'rb') as f:
+with open('out/c2f_a75.p', 'rb') as f:
 	c2f_quant = pickle.load(f) 
 c2f_dict = c2f_quant
 
@@ -78,7 +78,7 @@ np.quantile(dictlist, [.05, .25, .5 , .75, .95])
 # array([  1674.8,  13181. ,  39980. ,  94910. , 208683.8])
 
 # Facilty to Rangeland
-with open('out/f2r_a05.p', 'rb') as f:
+with open('out/f2r_a75.p', 'rb') as f:
 	f2r_quant = pickle.load(f) 
 f2r_dict = f2r_quant
 
@@ -95,6 +95,7 @@ for k, v in f2r_dict.items():
 # raise Exception("data loaded ; pre-plot")
 
 print("Starting Plot")
+# plt.rc('font', family='serif')
 
 # PLOT
 fig, ax = plt.subplots(figsize = (10,10))
@@ -107,7 +108,9 @@ rangelands.plot(ax = ax, color = 'white', alpha = 0.8, label = 'Rangeland')
 
 # composters
 ax.scatter(swis_df['lon'], swis_df['lat'], s = swis_df['cap_m3']/2000, 
-	label = 'Compost Facility', color = 'dimgray')
+	color = 'dimgray')
+
+# label = 'Compost Facility', 
 
 # PLOT LINES FROM COUNTY TO FACILITY
 for i in counties_popcen.index:
@@ -127,17 +130,17 @@ for i in counties_popcen.index:
 		# q = c2f_dict.loc[c2f_dict.index == f_no, county_name].values[0]
 		# q = c2f_dict[i, j] # USE THIS FOR TEST MATRIX ONLY
 		if q > 1000000:
-			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'y-', alpha = 0.6, linewidth=5.5)
+			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'c-', alpha = 0.6, linewidth=5.5)
 		elif q > 200000:
-			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'y-', alpha = 0.6, linewidth=3.5)
+			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'c-', alpha = 0.6, linewidth=3.5)
 		elif q > 50000:
-			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'y-', alpha = 0.6, linewidth=2.5)
+			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'c-', alpha = 0.6, linewidth=2.5)
 		elif q > 20000:
-			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'y-', alpha = 0.6, linewidth=1.5)
+			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'c-', alpha = 0.6, linewidth=1.5)
 		elif q > 2000: 
-			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'y-', alpha = 0.6, linewidth=0.75)
+			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'c-', alpha = 0.6, linewidth=0.75)
 		elif q > 200: 
-			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'y-', alpha = 0.6, linewidth=0.5)
+			_ = ax.plot([c_lon, f_lon], [c_lat, f_lat], 'c-', alpha = 0.6, linewidth=0.5)
 
 # PLOT FACILITY TO RANGELANDS
 for j in swis_df.index:
@@ -171,33 +174,39 @@ for j in swis_df.index:
 
 
 # LEGEND FLOW COMPOST- single bar
-ax.plot([],[], 'y-', alpha = 0.6, label = "Feedstock Flow")
 
-ax.plot([],[], 'm-', alpha = 0.6, label = 'Compost Flow')
+
+
 
 # LEGEND COUNTY CENTROID
 ax.plot([], [], 'x', color = 'dimgrey', markersize = 5, label = 'County Centroid')
+ax.plot([], [], 'o', color = 'dimgrey', markersize = 5, label = 'Compost Facility')
 
 ax.set_xlabel('Longitude')
 ax.set_ylabel('Latitude')
 # ax[0].set_title("Feedstock Flow from County Centroid to Facility")
-ax.legend()
+
 ax.axis('off')
 
 # LEGEND Flow by Quantity
-# ax[0].plot([], [], 'm-', alpha = 0.6, linewidth=0.5, label = '0 - 2000')
-# ax[0].plot([], [], 'm-', alpha = 0.6, linewidth=0.75, label = '2000 - 20000')
-# ax[0].plot([], [], 'm-', alpha = 0.6, linewidth=1.5, label = '20000 - 50000')
-# ax[0].plot([], [], 'm-', alpha = 0.6, linewidth=2.5, label = '20000 - 50000')
-# ax[0].plot([], [], 'm-', alpha = 0.6, linewidth=3.5, label = '50000 - 200000')
-# ax[0].plot([], [], 'm-', alpha = 0.6, linewidth=5.5, label = '200000 - 1000000')
+ax.plot([],[], 'm:', label = 'Compost Flow')
+ax.plot([], [], 'm-', alpha = 0.6, linewidth=0.5, label = '0 - 2000')
+ax.plot([], [], 'm-', alpha = 0.6, linewidth=0.75, label = '2000 - 20000')
+ax.plot([], [], 'm-', alpha = 0.6, linewidth=1.5, label = '20000 - 50000')
+ax.plot([], [], 'm-', alpha = 0.6, linewidth=2.5, label = '20000 - 50000')
+ax.plot([], [], 'm-', alpha = 0.6, linewidth=3.5, label = '50000 - 200000')
+ax.plot([], [], 'm-', alpha = 0.6, linewidth=5.5, label = '200000 - 1000000')
+
 # LEGEND FLOW - by size
-# ax[1].plot([], [], 'b-', alpha = 0.6, linewidth=0.5, label = '0 - 2000')
-# ax[1].plot([], [], 'b-', alpha = 0.6, linewidth=0.75, label = '2000 - 10000')
-# ax[1].plot([], [], 'b-', alpha = 0.6, linewidth=1.5, label = '10000 - 25000')
-# ax[1].plot([], [], 'b-', alpha = 0.6, linewidth=2.5, label = '25000 - 60000')
-# ax[1].plot([], [], 'b-', alpha = 0.6, linewidth=3.5, label = '60000 - 100000')
-# ax[1].plot([], [], 'b-', alpha = 0.6, linewidth=4.5, label = '100000+ ')
+ax.plot([],[], 'c:', alpha = 0.6, label = "Feedstock Flow")
+ax.plot([], [], 'c-', alpha = 0.6, linewidth=0.5, label = '0 - 2000')
+ax.plot([], [], 'c-', alpha = 0.6, linewidth=0.75, label = '2000 - 10000')
+ax.plot([], [], 'c-', alpha = 0.6, linewidth=1.5, label = '10000 - 25000')
+ax.plot([], [], 'c-', alpha = 0.6, linewidth=2.5, label = '25000 - 60000')
+ax.plot([], [], 'c-', alpha = 0.6, linewidth=3.5, label = '60000 - 100000')
+ax.plot([], [], 'c-', alpha = 0.6, linewidth=4.5, label = '100000+ ')
+
+ax.legend()
 
 
 # fig.savefig('Maps/flowCNI.png')       

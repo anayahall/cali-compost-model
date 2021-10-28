@@ -610,53 +610,54 @@ def RunModel(
 
 		print("PRICE ($/tCO2) = {0}".format(ton_price))
 		print("PRICE ($/acre) = {}".format(acre_price))
+		
 		c2f_values, f2r_values = SaveModelVars(c2f, f2r)
 		print("*********************************************")
 
 	return c2f_values, f2r_values, ton_values, acre_values, e_values, area_values #, land_app, cost_millions, CO2mit, abatement_cost
 
 # Now run the beast!
-c2f, f2r , t, acres, e, area = RunModel()
+# c2f, f2r , t, acres, e, area = RunModel()
 
 # save c and f (from alpha =0.75) for plotting in  FLOW FIG
-see flowCNI.py for that code
-with open('out/c2f_a05.p', 'wb') as f:
-	pickle.dump(c2f, f)
-with open('out/f2r_a05.p', 'wb') as f:
-	pickle.dump(f2r, f)
+# see flowCNI.py for that code
+# with open('out/c2f_a75.p', 'wb') as f:
+# 	pickle.dump(c2f, f)
+# with open('out/f2r_a75.p', 'wb') as f:
+# 	pickle.dump(f2r, f)
 
-###########################################################
-# PARETO FRONTIER PLOT
-###########################################################
-raise Exception('pause here to plot')
-pop off last element (bc skews plot)
-t1 = t[0:][:-1]
-# a1 = a[:-1]
-e1 = e[0:][:-1]
-area1 = area[:-1]
-acres1 = acres[:-1]
+# ###########################################################
+# # PARETO FRONTIER PLOT
+# ###########################################################
+# raise Exception('pause here to plot')
+# # pop off last element (bc skews plot)
+# t1 = t[0:][:-1]
+# # a1 = a[:-1]
+# e1 = e[0:][:-1]
+# area1 = area[:-1]
+# acres1 = acres[:-1]
 
 
-print("starting PARETO PLOTS!!!")
-plt.rc('font', family='serif')
+# print("starting PARETO PLOTS!!!")
+# plt.rc('font', family='serif')
 
-plt.figure(figsize=(10,6))
-plt.subplot(121)
-# plot co2 sequestered by cost per ton
-plt.plot(e1[0:],t1[0:],marker='o', color ='green')
-# plt.xlabel('Incresing Cost Weighting In Objective Function', fontsize=12)
-plt.xlabel('Total MMT CO2eq', fontsize=12)
-plt.ylabel(r'$/tCO2', fontsize=14)
-plt.title('Pareto Frontier of Price per Ton CO2', fontsize=16)
-
-plt.subplot(122)
-#plot total area treated by cost per acre
-plt.plot(area1, acres1 ,marker='*', color = 'black')
-plt.xlabel('Acres Treated with Compost', fontsize=12)
+# plt.figure(figsize=(10,6))
+# plt.subplot(121)
+# # plot co2 sequestered by cost per ton
+# plt.plot(e1[0:],t1[0:],marker='o', color ='green')
+# # plt.xlabel('Incresing Cost Weighting In Objective Function', fontsize=12)
 # plt.xlabel('Total MMT CO2eq', fontsize=12)
-plt.ylabel(r'$/Acre', fontsize=14)
-plt.title('Pareto Frontier of Price per Acre', fontsize=16)
-plt.show()
+# plt.ylabel(r'$/tCO2', fontsize=14)
+# plt.title('Pareto Frontier of Price per Ton CO2', fontsize=16)
+
+# plt.subplot(122)
+# #plot total area treated by cost per acre
+# plt.plot(area1, acres1 ,marker='*', color = 'black')
+# plt.xlabel('Acres Treated with Compost', fontsize=12)
+# # plt.xlabel('Total MMT CO2eq', fontsize=12)
+# plt.ylabel(r'$/Acre', fontsize=14)
+# plt.title('Pareto Frontier of Price per Acre', fontsize=16)
+# plt.show()
 
 
 
