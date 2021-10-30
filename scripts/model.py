@@ -614,10 +614,10 @@ def RunModel(
 		c2f_values, f2r_values = SaveModelVars(c2f, f2r)
 		print("*********************************************")
 
-	return c2f_values, f2r_values, ton_values, acre_values, e_values, area_values #, land_app, cost_millions, CO2mit, abatement_cost
+	return c2f_values, f2r_values, ton_values, acre_values, e_values, area_values, land_app_dict #, cost_millions, CO2mit, abatement_cost
 
 # Now run the beast!
-# c2f, f2r , t, acres, e, area = RunModel()
+# c2f, f2r , t, acres, e, area , land= RunModel()
 
 # save c and f (from alpha =0.75) for plotting in  FLOW FIG
 # see flowCNI.py for that code

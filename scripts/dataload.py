@@ -31,7 +31,7 @@ from california_cropland_cleaning import cleancropdata
 SUBSET = False 
 
 # Change this to activate/decativate print statements throughout
-DEBUG = True
+DEBUG = False
 
 # Change this for counties vs census tracts (true is muni, false is counties)
 CENSUSTRACT = False
@@ -219,6 +219,7 @@ print("rangelands loaded") if (DEBUG == True) else ()
 perennial_file = "compostrates/perennial_CN_high.csv"
 annual_file = "compostrates/annual_CN_high.csv"
 grazed_file = "compostrates/grazedgrasslands_CN_high.csv"
+# grazed_file = "compostrates/grazedgrasslands_CN_high.csv"
 
 
 value =  'GHG Emissions'

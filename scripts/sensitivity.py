@@ -2,14 +2,6 @@
 import numpy as np
 import os
 import cvxpy as cp
-# import datetime
-# from os.path import join as opj
-# import json
-# import sys
-# import gurobipy as gp
-# import pickle
-# import matplotlib.pyplot as plt
-
 import pandas as pd
 import shapely as shp
 import geopandas as gpd
@@ -48,34 +40,38 @@ evals = [0.103,  0.309]
 ## Spreading cost (h)
 hvals = [2.9, 8.7]
 
+
+# print("######DOUBLE CAP##########")
+# c2f, f2r , t, acres, e, area = RunModel(capacity_multiplier=2, a = cp.Parameter(value=0.75))
+
 # print(" >> LANDFILL EF SENSIVITIY <<")
 # for li in lvals:
 # 	print("Landfill EF: ", li)
 # 	c2f, f2r , t, acres, e, area = RunModel(landfill_ef = li, a = cp.Parameter(value=0.75))
 
+print("*********************************************")
+print("*********************************************")
+print(" >> TRANSPORTATION EF SENSIVITIY <<")
+for ti in tvals:
+	print(" >>>>> Transportation EF: ", ti)
+	c2f, f2r , t, acres, e, area = RunModel(kilometres_to_emissions = ti, 
+		a = cp.Parameter(value=0.75))
+
 # print("*********************************************")
 # print("*********************************************")
-# print(" >> TRANSPORTATION EF SENSIVITIY <<")
-# for ti in tvals:
-# 	print(" >>>>> Transportation EF: ", ti)
-# 	c2f, f2r , t, acres, e, area = RunModel(kilometres_to_emissions = ti, 
+# print(" >> PROCCESSING EF SENSIVITIY <<")
+# for yi in yvals:
+# 	print(" >>>>> Processing EF: ", yi)
+# 	c2f, f2r , t, acres, e, area = RunModel(process_emis = yi, 
 # 		a = cp.Parameter(value=0.75))
 
-print("*********************************************")
-print("*********************************************")
-print(" >> PROCCESSING EF SENSIVITIY <<")
-for yi in yvals:
-	print(" >>>>> Processing EF: ", yi)
-	c2f, f2r , t, acres, e, area = RunModel(process_emis = yi, 
-		a = cp.Parameter(value=0.75))
-
-print("*********************************************")
-print("*********************************************")
-print(" >> COLLECTION COST SENSIVITIY <<")
-for di in dvals:
-	print(" >>>>> Collection Cost: ", di)
-	c2f, f2r , t, acres, e, area = RunModel(c2f_trans_cost = di, 
-		a = cp.Parameter(value=0.75))
+# print("*********************************************")
+# print("*********************************************")
+# print(" >> COLLECTION COST SENSIVITIY <<")
+# for di in dvals:
+# 	print(" >>>>> Collection Cost: ", di)
+# 	c2f, f2r , t, acres, e, area = RunModel(c2f_trans_cost = di, 
+# 		a = cp.Parameter(value=0.75))
 
 print("*********************************************")
 print("*********************************************")
